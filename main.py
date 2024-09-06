@@ -120,7 +120,7 @@ blogWriting = Task(
   Avoid complex words or too formal so it doesn't sound like AI.
   Make it sound like it's being submitted from the public
   """,
-  expected_output="Full ghost story of at least 4 paragraphs or within 1500 words",
+  expected_output="Full ghost story of at least 4 paragraphs and within 1500 words",
   agent=writer
 )
 
