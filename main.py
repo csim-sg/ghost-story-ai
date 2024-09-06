@@ -121,7 +121,7 @@ task4 = Task(
   Adding relevent hashtag at the end of the story.
   List the Location, Ghostly being, Reglion as the categories
   """,
-  expected_output="Output should be in Json format, Keep the content in markdown format, consist of {'title': 'SEO title', 'content': 'Markdown format', 'tags': ['tag1', 'tag2'], 'categories': ['category1', 'category2'] }",
+  expected_output="Full output of Title, Content in Markdown format, Tags, Categories",
   agent=seoExpert,
   output_pydantic=Article
 )
