@@ -2,7 +2,6 @@ from typing import List
 from pydantic import Field, BaseModel
 import requests
 import os
-# import markdown
 
 wordpressAuthURL = 'https://public-api.wordpress.com/oauth2/token'
 

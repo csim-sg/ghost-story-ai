@@ -154,7 +154,7 @@ seoTask = Task(
   """,
   expected_output="""
     Full output of Title
-    Just the Story without title & feature image as content
+    Just the Story without title & feature image as content in Markdown format
     Tags
     Categories
     Featured Image from AI Designer, 
