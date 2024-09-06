@@ -32,7 +32,7 @@ writer = Agent(
 """,
   verbose=True,
   allow_delegation=False,
-  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1.5),
+  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.5),
   tools=[search_tool],
 )
 
@@ -45,7 +45,7 @@ designer = Agent(
 """,
   verbose=True,
   allow_delegation=False,
-  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.5),
+  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1),
   tools=[search_tool],
 )
 
@@ -58,7 +58,7 @@ seoExpert = Agent(
   Re-write the story slightly if needed according to SEO guidelines 
 """,
   verbose=True,
-  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.5),
+  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1),
   allow_delegation=False
 )
 
@@ -119,9 +119,9 @@ task4 = Task(
   Make sure the story follow SEO guideline and rewrite for SEO. 
   Make sure those images have proper title and alt text
   Adding relevent hashtag at the end of the story.
-  List the Location, Ghostly being, Reglion as the categories
+  According to the story, use the Location, Ghostly being, Reglion as the categories
   """,
-  expected_output="Full output of Title, Content in Markdown format, Tags, Categories",
+  expected_output="Full output of Title, full story as Content in Markdown format, Tags, Categories",
   agent=seoExpert,
   output_pydantic=Article
 )

@@ -7,6 +7,7 @@ wordpressAuthURL = 'https://public-api.wordpress.com/oauth2/token'
 
 clientID = os.environ['WP_CLIENT_ID']
 clientSecret = os.environ['WP_CLIENT_SECRET']
+redirectURL = 'https://relak.la'
 
 wordpressAPIURL = 'https://public-api.wordpress.com/rest/v1.1/sites/relak.la{}'
 
