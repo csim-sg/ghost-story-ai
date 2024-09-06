@@ -1,9 +1,10 @@
 from crewai import Agent, Task, Crew, Process
-from crewai_tools import SerperDevTool, DallETool
+from crewai_tools import SerperDevTool, DallETool, ScrapeWebsiteTool
 from langchain_openai import ChatOpenAI
 from wordpress import Article, Wordpress
 
 import os
+
 search_tool = SerperDevTool()
 
 # Define your agents with roles and goals
@@ -45,7 +46,7 @@ designer = Agent(
   verbose=True,
   allow_delegation=False,
   llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1),
-  tools=[search_tool],
+  tools=[search_tool, ScrapeWebsiteTool()],
 )
 
 AIDesigner = Agent(
@@ -128,7 +129,8 @@ searchImages = Task(
   description="""
   With the story written
   Search for relavent images for the story's paragraph
-  Add the direct image URL below the paragraph 
+  Scrape the website and extract the image URL.
+  Add the image URL below the paragraph 
   Below the image, add in citation of where is this image being found and credit link back.
   """,
   expected_output="Full story with the images link between the paragraph with credit.",
