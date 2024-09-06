@@ -140,25 +140,22 @@ generatingFeatureImage = Task(
   Generate a Dall-E prompt to create a feature image fitting the story. 
   The image should not be too scary.
   """,
-  expected_output="Output the Image Link & Description as Featured Image",
+  expected_output="Output the Image Link & Description as Featured Image into the pydantic model",
   agent=AIDesigner,
   async_execution=True
 )
 
 seoTask = Task(
   description="""
-  Think of a title that's relevent to the story. 
-  Make sure the story follow SEO guideline
+  Think of a SEO friendly title that's relevent to the story.   
+  Keep all images from Art Director
   Adding relevent hashtag at the end of the story.
   According to the story, add in relevent categories  
   """,
   expected_output="""
-    Full output of Title
-    Just the Story without title & feature image as content in Markdown format
-    Tags
-    Categories
-    Featured Image from AI Designer, 
-    featured image title will be the title
+    Output according to the pydantic model
+    story into content in HTML format
+    image_url as featureImageURL & image_description as featureImageDescription from AIDesigner output
   """,
   agent=seoExpert,
   output_pydantic=Article,
@@ -172,7 +169,7 @@ crew = Crew(
   verbose=True,
   process = Process.sequential,
   planning = True,
-  planning_llm = ChatOpenAI(model="gpt-4o")
+  planning_llm = ChatOpenAI(model="gpt-4o-mini")
 )
 
 # Get your crew to work!
@@ -182,6 +179,6 @@ print("######################")
 print(result.pydantic)
 
 
-# print("######### Start posting to Wordpress #########")
-# wp = Wordpress()
-# print(wp.NewArticle(result.pydantic))
+print("######### Start posting to Wordpress #########")
+wp = Wordpress()
+print(wp.NewArticle(result.pydantic))

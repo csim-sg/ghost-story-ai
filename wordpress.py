@@ -18,9 +18,9 @@ class Article(BaseModel):
   content: str = Field(title="Content", description="string in HTML format")
   tags: List[str] = Field(title="Tags")
   categories: List[str] = Field(title="categories")
-  featureImageURL: str = Field(title="featuredImageURL")
+  featureImageURL: str = Field(title="image_url")
   featureImageTitle: str = Field(title="featureImageTitle")
-  featureImageDescription: str = Field(title="featureImageDescription")
+  featureImageDescription: str = Field(title="image_description")
 
 class Wordpress():
 
