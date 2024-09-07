@@ -142,6 +142,7 @@ generatingFeatureImage = Task(
   The image need to fit the ghostly being and the lore
   The background setting of the image need to align with the lore & location of where is happen.
   The image should be realistic & but still adding eerie feeling
+  Don't add word in the image
   """,
   expected_output="Output the Image Link & Description",
   agent=AIDesigner,
@@ -158,7 +159,10 @@ seoTask = Task(
   """,
   expected_output="""
     Output according to the pydantic model
-    story into content in HTML format without the feature image information, category, tags
+    story into content in HTML format
+    title into title
+    category into category
+    tags into tags
     image_url as featureImageURL & image_description as featureImageDescription from AIDesigner output
   """,
   agent=seoExpert,
