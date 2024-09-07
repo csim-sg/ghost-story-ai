@@ -3,15 +3,17 @@ from pydantic import Field, BaseModel
 import requests
 import os
 
+
+
 wordpressAuthURL = 'https://public-api.wordpress.com/oauth2/token'
 
 clientID = os.environ['WP_CLIENT_ID']
 clientSecret = os.environ['WP_CLIENT_SECRET']
 username = os.environ['WP_USERNAME']
 password = os.environ['WP_PASSWORD']
-redirectURL = 'https://relak.la'
+blogDomain = os.environ['WP_DOMAIN']
 
-wordpressAPIURL = 'https://public-api.wordpress.com/rest/v1.1/sites/relak.la{}'
+wordpressAPIURL = f'https://public-api.wordpress.com/rest/v1.1/{blogDomain}/'
 
 class Article(BaseModel):
   title: str = Field(title="Title")
@@ -39,7 +41,7 @@ class Wordpress():
 
   def UploadImage(self, article: Article, token: str):    
     response = requests.post(
-      wordpressAPIURL.format("/media/new"),
+      f'{wordpressAPIURL}/media/new',
       headers={
         "Authorization": "BEARER {}".format(token)
       },
@@ -57,7 +59,7 @@ class Wordpress():
     token = self.getWordpressToken()
     imageRes = self.UploadImage(article=article, token=token['access_token'])    
     response = requests.post(
-      wordpressAPIURL.format("/posts/new"),
+      f'{wordpressAPIURL}/posts/new',
       headers={
         "Authorization": "BEARER {}".format(token['access_token'])
       },
