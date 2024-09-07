@@ -28,6 +28,8 @@ jobs:
       env: 
         WP_CLIENT_ID: ${{ secrets.WP_CLIENT_ID }}
         WP_CLIENT_SECRET: ${{ secrets.WP_CLIENT_SECRET }}
+        WP_USERNAME: ${{ secrets.WP_USERNAME }}
+        WP_PASSWORD: ${{ secrets.WP_PASSWORD }}
         SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         OPENAI_ORGANIZATION: ${{ secrets.OPENAI_ORGANIZATION }}

@@ -55,6 +55,7 @@ AIDesigner = Agent(
   backstory="""
   As a AI Art director, your job will be to generate best relevent prompt for Dall-E,
   The images must fit well to the story background, location, ghostly being.
+  You like realistic image generation with a eerie feeling
 """,
   verbose=True,
   allow_delegation=False,
@@ -139,10 +140,12 @@ searchImages = Task(
 
 generatingFeatureImage = Task(
   description="""
-  Generate a Dall-E prompt to create a feature image fitting the story. 
-  The image should not be too scary.
+  With the story, generate a feature image that can be used with the 
+  The image need to fit the ghostly being and the lore
+  The background setting of the image need to align with the lore & location of where is happen.
+  The image should be realistic & but still adding eerie feeling
   """,
-  expected_output="Output the Image Link & Description as Featured Image into the pydantic model",
+  expected_output="Output the Image Link & Description",
   agent=AIDesigner,
   async_execution=True
 )
@@ -156,7 +159,7 @@ seoTask = Task(
   """,
   expected_output="""
     Output according to the pydantic model
-    story into content in HTML format
+    story into content in HTML format without the feature image information, category, tags
     image_url as featureImageURL & image_description as featureImageDescription from AIDesigner output
   """,
   agent=seoExpert,
