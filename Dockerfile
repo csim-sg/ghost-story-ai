@@ -8,6 +8,6 @@ RUN pip install 'crewai[tools]'
 
 RUN mkdir -p /app
 WORKDIR /app
-ADD ./main.py /app/main.py
+ADD ./ /app/
 
 CMD python main.py
