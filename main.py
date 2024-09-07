@@ -1,9 +1,7 @@
 from crewai import Agent, Task, Crew, Process
 from crewai_tools import SerperDevTool, DallETool, ScrapeWebsiteTool
 from langchain_openai import ChatOpenAI
-from wordpress import Article, Wordpress
-
-import os
+from wordpress import Article, ArticleImage, Wordpress
 
 search_tool = SerperDevTool()
 
@@ -147,6 +145,7 @@ generatingFeatureImage = Task(
   """,
   expected_output="Output the Image Link & Description",
   agent=AIDesigner,
+  output_pydantic=ArticleImage,
   async_execution=True
 )
 
@@ -174,16 +173,17 @@ crew = Crew(
   verbose=True,
   process = Process.sequential,
   planning = True,
-  planning_llm = ChatOpenAI(model="gpt-4o-mini")
+  planning_llm = ChatOpenAI(model="gpt-3.5-turbo")
 )
 
 # Get your crew to work!
 result = crew.kickoff()
-
+taskOut = generatingFeatureImage.output
 print("######################")
 print(result.pydantic)
+print(taskOut)
 
 
 print("######### Start posting to Wordpress #########")
 wp = Wordpress()
-print(wp.NewArticle(result.pydantic))
+print(wp.NewArticle(result.pydantic, taskOut.pydantic))

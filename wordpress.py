@@ -13,7 +13,7 @@ username = os.environ['WP_USERNAME']
 password = os.environ['WP_PASSWORD']
 blogDomain = os.environ['WP_DOMAIN']
 
-wordpressAPIURL = f'https://public-api.wordpress.com/rest/v1.1/{blogDomain}/'
+wordpressAPIURL = f'https://public-api.wordpress.com/rest/v1.1/sites/{blogDomain}'
 
 class Article(BaseModel):
   title: str = Field(title="Title")
@@ -23,6 +23,11 @@ class Article(BaseModel):
   featureImageURL: str = Field(title="image_url")
   featureImageTitle: str = Field(title="featureImageTitle")
   featureImageDescription: str = Field(title="image_description")
+
+class ArticleImage(BaseModel):
+  featureImageURL: str = Field(description="Link of the Image")
+  featureImageTitle: str = Field(description="Title of the image")
+  featureImageDescription: str = Field(description="Description used to generate the image")
 
 class Wordpress():
 
@@ -39,25 +44,27 @@ class Wordpress():
     )
     return response.json()
 
-  def UploadImage(self, article: Article, token: str):    
+  def UploadImage(self, featuredImage: ArticleImage, token: str):
+    print(f'{wordpressAPIURL}/media/new') 
     response = requests.post(
       f'{wordpressAPIURL}/media/new',
       headers={
         "Authorization": "BEARER {}".format(token)
       },
       data = {
-        'media_urls[]': article.featureImageURL,
-        'attrs[0][title]': article.featureImageTitle,
-        'attrs[0][alt]': article.featureImageTitle,
-        'attrs[0][caption]': article.featureImageTitle,
-        'attrs[0][description]': article.featureImageDescription
+        'media_urls[]': featuredImage.featureImageURL,
+        'attrs[0][title]': featuredImage.featureImageTitle,
+        'attrs[0][alt]': featuredImage.featureImageTitle,
+        'attrs[0][caption]': featuredImage.featureImageTitle,
+        'attrs[0][description]': featuredImage.featureImageDescription
       }
     )
+    print(response)
     return response.json()
 
-  def NewArticle(self, article: Article):
+  def NewArticle(self, article: Article, featuredImage: ArticleImage):
     token = self.getWordpressToken()
-    imageRes = self.UploadImage(article=article, token=token['access_token'])    
+    imageRes = self.UploadImage(featuredImage=featuredImage, token=token['access_token'])    
     response = requests.post(
       f'{wordpressAPIURL}/posts/new',
       headers={
@@ -73,6 +80,3 @@ class Wordpress():
       }
     )
     return response
-
-
-
