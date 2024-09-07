@@ -159,7 +159,7 @@ seoTask = Task(
   """,
   expected_output="""
     Output according to the pydantic model
-    story into content in HTML format without the feature image information
+    story into content in HTML format without the feature image information, category, tags
     image_url as featureImageURL & image_description as featureImageDescription from AIDesigner output
   """,
   agent=seoExpert,
