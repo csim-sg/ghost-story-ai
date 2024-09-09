@@ -29,8 +29,7 @@ writer = Agent(
 """,
   verbose=True,
   allow_delegation=True,
-  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.5),
-  tools=[search_tool],
+  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.5)
 )
 
 designer = Agent(
@@ -85,19 +84,15 @@ ghostlyResearch = Task(
   expected_output="""
   Their Name and alias, characteristics, religion information, their lore in the following format and in bullet points
   ## Name & Alias ##
-    1. Zhiang Shi
 
   ## Characteristics ##
-    1. Translucent
-    2. White figure
+
 
   ## Religion Information ##
-    1. Zhiang Shi
-    2. Chinese Taoist religion
+
 
   ## Lore ##
-    1. Zhiang Shi
-    2. Chinese Taoist religion
+
   """,
   agent=researcher,
   async_execution=True
@@ -110,11 +105,8 @@ detailResearch = Task(
   expected_output="""
   Full output in the following with bullet points
   ## History of the ghostly being ##
-    1. Zhiang Shi
 
   ## Rumor of where is being sighted ##
-    1. Forest of Indonetion
-    2. Chinatown
 
   """,
   agent=researcher,
@@ -129,21 +121,19 @@ detailLocationResearch = Task(
   expected_output="""
   Full output in the following with bullet points
   ## History of the location ##
-    1. Zhiang Shi
 
   ## When it happen ##
-    1. Forest of Indonetion
-    2. Chinatown
   
   ## Any back story or rumor in the location where its being sighted ##
-    1. Zhiang Shi
+
   """,
   agent=researcher,
   context=[ghostlyResearch]
 )
 
 blogWriting = Task(
-  description="""Using the information provided, write a scary story about the ghostly being.
+  description="""
+  Using the all the tasks output provided, craft a horror story.
   The story can be unrealistic but not too much to unbelievable. 
   Adding some backstory and history to make it more realistic
   Follow SEO guideline and keyword so it be can be rank better.
