@@ -165,7 +165,7 @@ blogWriting = Task(
 
 searchImages = Task(
   description="""
-  With the story written
+  Based on the information given
   Search for relavent images for the story's paragraph
   Scrape the website and extract the image URL.
   Add the image URL below the paragraph 
@@ -173,21 +173,21 @@ searchImages = Task(
   """,
   expected_output="Full story with the images link between the paragraph with credit.",
   agent=designer,
-  context=[blogWriting]
+  context=[ghostlyResearch, detailResearch, detailLocationResearch]
 )
 
 generatingFeatureImage = Task(
   description="""
   With the given information, generate a feature image that can be used with the 
-  The image need to fit the ghostly being and the lore
+  The image need to fit the information of the ghost
   The background setting of the image need to align with the lore & location of where is happen.
-  The image should be realistic & but still adding eerie feeling
+  The image should be realistic but not too scary. 
   Don't add word in the image
   """,
   expected_output="Output the Image Link & Description",
   agent=AIDesigner,
   output_pydantic=ArticleImage,
-  context=[ghostlyResearch, detailResearch, detailLocationResearch, blogWriting],
+  context=[ghostlyResearch, detailResearch, detailLocationResearch]
 )
 
 seoTask = Task(
@@ -198,6 +198,7 @@ seoTask = Task(
   Keep all images from Art Director
   Adding relevent hashtag at the end of the story.
   According to the story, add in relevent categories  
+  Don't need to include title and featured image in the content output.
   """,
   expected_output="""
     Output according to the pydantic model
@@ -208,8 +209,7 @@ seoTask = Task(
     image_url as featureImageURL & image_description as featureImageDescription from AIDesigner output
   """,
   agent=seoExpert,
-  output_pydantic=Article,
-  context=[searchImages, generatingFeatureImage, blogWriting]
+  output_pydantic=Article
 )
 
 # Instantiate your crew with a sequential process
