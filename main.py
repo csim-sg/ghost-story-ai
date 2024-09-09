@@ -77,14 +77,15 @@ seoExpert = Agent(
 ghostBeingResearch = Task(
   description="""
   Search the internet on any ghostly being from Malay & Chinese culture
-  The search can be based on the following 
-  1. popular ghost location, 
+  The search can be based on the following.
+  Make sure the ghostly being are not being writen in https://relak.la recently. 
+  1. Popular ghost location, 
   2. Army ghost story
   3. Infamous ghost
   4. Ghost with long history and popular in the region
   """,
   expected_output="""
-    The name of the ghostly being
+    The name of the ghostly being, that was not written in https://relak.la in the recent 10 posts.
   """,
   agent=researcher,
   
