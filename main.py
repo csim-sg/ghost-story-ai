@@ -99,8 +99,7 @@ ghostlyResearch = Task(
     1. Zhiang Shi
     2. Chinese Taoist religion
   """,
-  agent=researcher,
-  async_execution=True
+  agent=researcher
 )
 
 detailResearch = Task(
