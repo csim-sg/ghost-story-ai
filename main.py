@@ -20,13 +20,12 @@ researcher = Agent(
   #max_iter=5
 )
 writer = Agent(
-  role='Imaginary writer intern',
-  goal='Crafting a very believable story.',
+  role='Imaginary Editor',
+  goal='Crafting a very believable story based on some true facts.',
   backstory="""
   You are a creative & imaginary writer for a online blog. 
-  Though the article written in the online blog are all friction, 
-  but you still love to combine current happening in South East Asia with additional research from your co-worker.
-  You always try to make the article as believable as possible
+  With the information given by co-worker, you always try to write a believable story.
+  In order for your story to be ranked well in Search Engine, you will add keywords, and follow google SEO guideline.
 """,
   verbose=True,
   allow_delegation=False,
@@ -35,11 +34,11 @@ writer = Agent(
 )
 
 designer = Agent(
-  role='Art director',
+  role='Paranormal Researcher Assistant',
   goal='Find images from the internet that fit the story',
   backstory="""
-  You are an young creative Art director for the company. 
-  You job is to search the internet and find images of the ghostly being or the location from the story written
+  Your job is to find images from the internet that fit the story & location. 
+  In order to not get sued, you make sure the images used are properly credited back to the main website. 
 """,
   verbose=True,
   allow_delegation=False,
@@ -73,22 +72,11 @@ seoExpert = Agent(
   allow_delegation=False
 )
 
-webDeveloper = Agent(
-  role='Web Developer',
-  goal='Make sure the final output images or video are tag correctly',
-  backstory="""
-  Web developer helping the company to make no broken images or wrongly tag video.
-""",
-  verbose=True,
-  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1),
-  allow_delegation=False
-)
-
 
 # Create tasks for your agents
 ghostlyResearch = Task(
   description="""
-  Conduct finding on any ghostly being from South East Asia culture
+  Search the internet on any ghostly being from South East Asia culture
   then find a detail description of the ghostly being
   be more creative in the search term so it will not always return the same results
   Mainly focus on countries and Islands around Singapore & Malaysia
@@ -110,18 +98,61 @@ ghostlyResearch = Task(
     1. Zhiang Shi
     2. Chinese Taoist religion
   """,
-  agent=researcher
+  agent=researcher,
+  async_execution=True
+)
+
+detailResearch = Task(
+  description="""
+  From the information given, do a more detail search on the history of the ghostly being.
+  """,
+  expected_output="""
+  Full output in the following with bullet points
+  ## History of the ghostly being ##
+    1. Zhiang Shi
+
+  ## Rumor of where is being sighted ##
+    1. Forest of Indonetion
+    2. Chinatown
+
+  """,
+  agent=researcher,
+  async_execution=True,
+  context=[ghostlyResearch]
+)
+
+detailLocationResearch = Task(
+  description="""
+  From the information given, do a more detail search on where the ghostly being was being sighted, and any back story or history for the location.
+  """,
+  expected_output="""
+  Full output in the following with bullet points
+  ## History of the location ##
+    1. Zhiang Shi
+
+  ## When it happen ##
+    1. Forest of Indonetion
+    2. Chinatown
+  
+  ## Any back story or rumor in the location where its being sighted ##
+    1. Zhiang Shi
+  """,
+  agent=researcher,
+  async_execution=True,
+  context=[ghostlyResearch]
 )
 
 blogWriting = Task(
   description="""Using the information provided, write a scary story about the ghostly being.
   The story can be unrealistic but not too much to unbelievable. 
-  Be creative with the location that the story happen, you can search for places where this ghostly being has being sighted
+  Adding some backstory and history to make it more realistic
+  Follow SEO guideline and keyword so it be can be rank better.
   Avoid complex words or too formal so it doesn't sound like AI.
   Make it sound like it's being submitted from the public
   """,
-  expected_output="Full ghost story of at least 4 paragraphs and within 1500 words",
-  agent=writer
+  expected_output="Full ghost story of at least 5 paragraphs and within 1500 words",
+  agent=writer,
+  context=[ghostlyResearch, detailResearch, detailLocationResearch]
 )
 
 searchImages = Task(
@@ -138,7 +169,7 @@ searchImages = Task(
 
 generatingFeatureImage = Task(
   description="""
-  With the story, generate a feature image that can be used with the 
+  With the given information, generate a feature image that can be used with the 
   The image need to fit the ghostly being and the lore
   The background setting of the image need to align with the lore & location of where is happen.
   The image should be realistic & but still adding eerie feeling
@@ -147,12 +178,15 @@ generatingFeatureImage = Task(
   expected_output="Output the Image Link & Description",
   agent=AIDesigner,
   output_pydantic=ArticleImage,
+  context=[ghostlyResearch, detailResearch, detailLocationResearch, blogWriting],
   async_execution=True
 )
 
 seoTask = Task(
   description="""
-  Think of a SEO friendly title that's relevent to the story.   
+  Think of a SEO friendly title that's relevent to the story.
+  Make sure the story written have relevent SEO keyword
+  The flow of the story must be correct and not sound too much like AI generated
   Keep all images from Art Director
   Adding relevent hashtag at the end of the story.
   According to the story, add in relevent categories  
