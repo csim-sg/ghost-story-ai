@@ -70,7 +70,7 @@ seoExpert = Agent(
   Re-write the story slightly if needed according to SEO guidelines 
 """,
   verbose=True,
-  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1),
+  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7),
   allow_delegation=False
 )
 
