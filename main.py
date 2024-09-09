@@ -164,7 +164,7 @@ searchImages = Task(
   Below the image, add in citation of where is this image being found and credit link back.
   """,
   expected_output="Full story with the images link between the paragraph with credit.",
-  agent=designer
+  agent=designer,
   context=[blogWriting]
 )
 
