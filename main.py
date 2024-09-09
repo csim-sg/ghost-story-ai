@@ -28,7 +28,7 @@ writer = Agent(
   In order for your story to be ranked well in Search Engine, you will add keywords, and follow google SEO guideline.
 """,
   verbose=True,
-  allow_delegation=False,
+  allow_delegation=True,
   llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.5),
   tools=[search_tool],
 )
@@ -38,6 +38,7 @@ designer = Agent(
   goal='Find images from the internet that fit the story',
   backstory="""
   Your job is to find images from the internet that fit the story & location. 
+  When using the image, go to the website found and look for relevent image link
   In order to not get sued, you make sure the images used are properly credited back to the main website. 
 """,
   verbose=True,
@@ -69,7 +70,7 @@ seoExpert = Agent(
 """,
   verbose=True,
   llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1),
-  allow_delegation=False
+  allow_delegation=True
 )
 
 
@@ -207,7 +208,7 @@ seoTask = Task(
 # Instantiate your crew with a sequential process
 crew = Crew(
   agents=[researcher, writer, designer, seoExpert, AIDesigner],
-  tasks=[ghostlyResearch, blogWriting, searchImages, generatingFeatureImage, seoTask],
+  tasks=[ghostlyResearch, detailResearch, detailLocationResearch, blogWriting, searchImages, generatingFeatureImage, seoTask],
   verbose=True,
   process = Process.sequential,
   planning = True,
