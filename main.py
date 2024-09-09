@@ -99,7 +99,8 @@ ghostlyResearch = Task(
     1. Zhiang Shi
     2. Chinese Taoist religion
   """,
-  agent=researcher
+  agent=researcher,
+  async_execution=True
 )
 
 detailResearch = Task(
@@ -117,7 +118,8 @@ detailResearch = Task(
 
   """,
   agent=researcher,
-  async_execution=True
+  context=[ghostlyResearch]
+  
 )
 
 detailLocationResearch = Task(
@@ -137,7 +139,7 @@ detailLocationResearch = Task(
     1. Zhiang Shi
   """,
   agent=researcher,
-  async_execution=True
+  context=[ghostlyResearch]
 )
 
 blogWriting = Task(
@@ -163,6 +165,7 @@ searchImages = Task(
   """,
   expected_output="Full story with the images link between the paragraph with credit.",
   agent=designer
+  context=[blogWriting]
 )
 
 generatingFeatureImage = Task(
@@ -198,7 +201,7 @@ seoTask = Task(
   """,
   agent=seoExpert,
   output_pydantic=Article,
-  context=[searchImages, generatingFeatureImage]
+  context=[searchImages, generatingFeatureImage, blogWriting]
 )
 
 # Instantiate your crew with a sequential process
