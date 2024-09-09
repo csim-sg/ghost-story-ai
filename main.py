@@ -24,12 +24,14 @@ writer = Agent(
   goal='Crafting a very believable story based on some true facts.',
   backstory="""
   You are a creative & imaginary writer for a online blog. 
+  You work closely with Senior Paranormal Researcher, in getting more information in order to write your story.
   With the information given by co-worker, you always try to write a believable story.
   In order for your story to be ranked well in Search Engine, you will add keywords, and follow google SEO guideline.
 """,
   verbose=True,
   allow_delegation=True,
-  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.5)
+  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.5),
+  tools=[search_tool],
 )
 
 designer = Agent(
@@ -69,17 +71,30 @@ seoExpert = Agent(
 """,
   verbose=True,
   llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1),
-  allow_delegation=True
+  allow_delegation=False
+)
+
+ghostBeingResearch = Task(
+  description="""
+  Search the internet on any ghostly being from Malay & Chinese culture
+  The search can be based on the following 
+  1. popular ghost location, 
+  2. Army ghost story
+  3. Infamous ghost
+  4. Ghost with long history and popular in the region
+  """,
+  expected_output="""
+    The name of the ghostly being
+  """,
+  agent=researcher,
+  
 )
 
 
 # Create tasks for your agents
 ghostlyResearch = Task(
   description="""
-  Search the internet on any ghostly being from South East Asia culture
-  then find a detail description of the ghostly being
-  be more creative in the search term so it will not always return the same results
-  Mainly focus on countries and Islands around Singapore & Malaysia
+  Full research on the ghostly being to write and provide the required output
   """,
   expected_output="""
   Their Name and alias, characteristics, religion information, their lore in the following format and in bullet points
@@ -95,7 +110,8 @@ ghostlyResearch = Task(
 
   """,
   agent=researcher,
-  async_execution=True
+  async_execution=True,
+  context=[ghostBeingResearch]
 )
 
 detailResearch = Task(
@@ -110,7 +126,8 @@ detailResearch = Task(
 
   """,
   agent=researcher,
-  context=[ghostlyResearch]
+  async_execution=True,
+  context=[ghostBeingResearch]
   
 )
 
@@ -128,13 +145,14 @@ detailLocationResearch = Task(
 
   """,
   agent=researcher,
-  context=[ghostlyResearch]
+  async_execution=True,
+  context=[ghostBeingResearch]
 )
 
 blogWriting = Task(
   description="""
-  Using the all the tasks output provided, craft a horror story.
-  The story can be unrealistic but not too much to unbelievable. 
+  Based on the information,
+  Craft a scary story that can be unrealistic but not too much to unbelievable. 
   Adding some backstory and history to make it more realistic
   Follow SEO guideline and keyword so it be can be rank better.
   Avoid complex words or too formal so it doesn't sound like AI.
@@ -197,7 +215,7 @@ seoTask = Task(
 # Instantiate your crew with a sequential process
 crew = Crew(
   agents=[researcher, writer, designer, seoExpert, AIDesigner],
-  tasks=[ghostlyResearch, detailResearch, detailLocationResearch, blogWriting, searchImages, generatingFeatureImage, seoTask],
+  tasks=[ghostBeingResearch, ghostlyResearch, detailResearch, detailLocationResearch, blogWriting, searchImages, generatingFeatureImage, seoTask],
   verbose=True,
   process = Process.sequential,
   planning = True,
