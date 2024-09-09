@@ -117,8 +117,7 @@ detailResearch = Task(
 
   """,
   agent=researcher,
-  async_execution=True,
-  context=[ghostlyResearch]
+  async_execution=True
 )
 
 detailLocationResearch = Task(
@@ -138,8 +137,7 @@ detailLocationResearch = Task(
     1. Zhiang Shi
   """,
   agent=researcher,
-  async_execution=True,
-  context=[ghostlyResearch]
+  async_execution=True
 )
 
 blogWriting = Task(
@@ -179,7 +177,6 @@ generatingFeatureImage = Task(
   agent=AIDesigner,
   output_pydantic=ArticleImage,
   context=[ghostlyResearch, detailResearch, detailLocationResearch, blogWriting],
-  async_execution=True
 )
 
 seoTask = Task(
