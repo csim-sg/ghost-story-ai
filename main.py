@@ -29,7 +29,7 @@ writer = Agent(
   In order for your story to be ranked well in Search Engine, you will add keywords, and follow google SEO guideline.
 """,
   verbose=True,
-  allow_delegation=True,
+  allow_delegation=False,
   llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.5),
   tools=[search_tool],
 )
@@ -71,7 +71,7 @@ seoExpert = Agent(
 """,
   verbose=True,
   llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7),
-  allow_delegation=False
+  allow_delegation=True
 )
 
 ghostBeingResearch = Task(
@@ -154,12 +154,15 @@ blogWriting = Task(
   description="""
   Based on the information,
   Craft a scary story that can be unrealistic but not too much to unbelievable. 
-  Adding some backstory and history to make it more realistic
   Follow SEO guideline and keyword so it be can be rank better.
+  Adding some backstory and history to make it more realistic
   Avoid complex words or too formal so it doesn't sound like AI.
   Make it sound like it's being submitted from the public
   """,
-  expected_output="Full ghost story of at least 5 paragraphs and within 1500 words",
+  expected_output="""
+  Full ghost story of at least 5 paragraphs and within 1500 words
+  The flow of the story should have an introduction of the encounter, what happen, some history of the place & encounter, what happen in the end.
+  """,
   agent=writer,
   context=[ghostlyResearch, detailResearch, detailLocationResearch]
 )
@@ -196,14 +199,15 @@ seoTask = Task(
   Think of a SEO friendly title that's relevent to the story.
   Make sure the story written have relevent SEO keyword
   The flow of the story must be correct and not sound too much like AI generated
+  If the story is less than 5 paragraphs or 1500 words, ask for rewrite.
   Keep all images from Art Director
   Adding relevent hashtag at the end of the story.
-  According to the story, add in relevent categories  
-  Don't need to include title and featured image in the content output.
+  According to the story, add in relevent categories
   """,
   expected_output="""
     Output according to the pydantic model
     story into content in HTML format
+    Remove title and featured image in the content output.
     title into title
     category into category
     tags into tags
