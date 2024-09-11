@@ -36,9 +36,9 @@ writer = Agent(
 
 designer = Agent(
   role='Paranormal Researcher Assistant',
-  goal='Find images from the internet that fit the story',
+  goal='Search images from the internet that fit the story',
   backstory="""
-  Your job is to find images from the internet that fit the story & location. 
+  Your job is to search for images from the internet that fit the story & location. 
   When using the image, go to the website found and look for relevent image link
   In order to not get sued, you make sure the images used are properly credited back to the main website. 
 """,
@@ -72,6 +72,7 @@ seoExpert = Agent(
   verbose=True,
   llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7),
   allow_delegation=True
+  tools=[search_tool],
 )
 
 ghostBeingResearch = Task(
@@ -161,7 +162,12 @@ blogWriting = Task(
   """,
   expected_output="""
   Full ghost story of at least 5 paragraphs and within 1500 words
+  Include an eye catching & relevent SEO title.
   The flow of the story should have an introduction of the encounter, what happen, some history of the place & encounter, what happen in the end.
+  Output the format using the following format
+  ## Title ##
+
+  ## Story ##
   """,
   agent=writer,
   context=[ghostlyResearch, detailResearch, detailLocationResearch]
@@ -169,17 +175,20 @@ blogWriting = Task(
 
 searchImages = Task(
   description="""
-  Based on the information given
-  Search for relavent images for the story's paragraph
+  Given the story, 
+  Search a few relavent images that may fit the theme & the ghostly being in the story
+  Insert the image between paragraphs thats most relevent.
+  Below the image, add in citation of where is this image being found and credit link back.
+  To get the exact link of the image. 
   Scrape the website and extract the image URL.
   """,
-  expected_output="Add the image URL below the paragraph with credit. Below the image, add in citation of where is this image being found and credit link back.",
+  expected_output="Output the title & the whole story with the images",
   agent=designer,
 )
 
 generatingFeatureImage = Task(
   description="""
-  With the given information, generate a feature image that can be used with the 
+  With the given story, generate a feature image that can be used with the 
   The image need to fit the information of the ghost
   The background setting of the image need to align with the lore & location of where is happen.
   The image should be realistic but not too scary. 
@@ -187,16 +196,16 @@ generatingFeatureImage = Task(
   """,
   expected_output="Output the Image Link & Description",
   agent=AIDesigner,
+  async_execution=True,
   output_pydantic=ArticleImage,
 )
 
 seoTask = Task(
   description="""
-  Think of a SEO friendly title that's relevent to the story.
-  Make sure the story written have relevent SEO keyword
-  The flow of the story must be correct and not sound too much like AI generated
-  If the story is less than 5 paragraphs or 1500 words, ask for rewrite.
-  Keep all images from Art Director
+  Read through the story written have relevent SEO keyword
+  The flow of the story make sense and not sound too much like AI generated
+  Extend or rewrite if it is less than 5 paragraphs or 1500 words excluding title.
+  Always keep all images from Art Director
   Adding relevent hashtag at the end of the story.
   According to the story, add in relevent categories
   """,
