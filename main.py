@@ -20,12 +20,12 @@ researcher = Agent(
   #max_iter=5
 )
 writer = Agent(
-  role='Imaginary Editor',
-  goal='Crafting a very believable story based on some true facts.',
+  role='SEO Trained Editor',
+  goal='Crafting a very believable story based on the true facts.',
   backstory="""
-  You are a creative & imaginary writer for a online blog. 
+  You are a creative writer for a online blog. 
   You work closely with Senior Paranormal Researcher, in getting more information in order to write your story.
-  With the information given by co-worker, you always try to write a believable story.
+  With the information given by co-worker, you will research for possible SEO keyword and incorporate into a believable story.
   In order for your story to be ranked well in Search Engine, you will add keywords, and follow google SEO guideline.
 """,
   verbose=True,
@@ -54,7 +54,7 @@ AIDesigner = Agent(
   backstory="""
   As a AI Art director, your job will be to generate best relevent prompt for Dall-E,
   The images must fit well to the story background, location, ghostly being.
-  You like realistic image generation with a eerie feeling
+  You like realistic image generation with an eerie feeling
 """,
   verbose=True,
   allow_delegation=False,
@@ -71,7 +71,7 @@ seoExpert = Agent(
 """,
   verbose=True,
   llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7),
-  allow_delegation=True
+  allow_delegation=True,
   tools=[search_tool],
 )
 
@@ -79,11 +79,11 @@ ghostBeingResearch = Task(
   description="""
   Search the internet on any ghostly being from Malay & Chinese culture
   The search can be based on the following.
-  Make sure the ghostly being are not being writen in https://relak.la recently. 
   1. Popular ghost location, 
   2. Army ghost story
   3. Infamous ghost
   4. Ghost with long history and popular in the region
+  Make sure the ghostly being are not being writen in https://relak.la recently. 
   """,
   expected_output="""
     The name of the ghostly being, that was not written in https://relak.la in the recent 10 posts.
@@ -153,10 +153,10 @@ detailLocationResearch = Task(
 
 blogWriting = Task(
   description="""
-  Based on the information,
-  Craft a scary story that can be unrealistic but not too much to unbelievable. 
-  Follow SEO guideline and keyword so it be can be rank better.
-  Adding some backstory and history to make it more realistic
+  Based on the information, craft a story based on someone related or yourself.
+  Search for possible SEO Keywords that can be used in the story.
+  The story needs to follow SEO guideline, and scary that can be unrealistic but not too much to unbelievable. 
+  To make it more realistics, add some true facts and history.
   Avoid complex words or too formal so it doesn't sound like AI.
   Make it sound like it's being submitted from the public
   """,
