@@ -222,7 +222,7 @@ seoTask = Task(
   """,
   agent=seoExpert,
   output_pydantic=Article,
-  context=[blogWriting, generatingFeatureImage, searchImages]
+  context=[blogWriting, searchImages]
 )
 
 # Instantiate your crew with a sequential process
