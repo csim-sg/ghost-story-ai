@@ -176,14 +176,15 @@ blogWriting = Task(
 searchImages = Task(
   description="""
   Given the story, 
-  Search a few relavent images that may fit the theme & the ghostly being in the story
-  Insert the image between paragraphs thats most relevent.
-  Below the image, add in citation of where is this image being found and credit link back.
-  To get the exact link of the image. 
-  Scrape the website and extract the image URL.
+  Search a few relavent images that may fit the theme & the ghostly being in the story  
+  Always find the exact link of the image to use, Scrape the website and extract the image URL.
   """,
-  expected_output="Output the title & the whole story with the images",
+  expected_output="""
+    Output a few images with their original website and which paragraph that this image should be inserted.
+  """,
   agent=designer,
+  async_execution=True,
+  context=[blogWriting]
 )
 
 generatingFeatureImage = Task(
@@ -202,16 +203,17 @@ generatingFeatureImage = Task(
 
 seoTask = Task(
   description="""
+  Making sure the title of the story is SEO friendly & eye catching.
   Read through the story written have relevent SEO keyword
   The flow of the story make sense and not sound too much like AI generated
   Extend or rewrite if it is less than 5 paragraphs or 1500 words excluding title.
-  Always keep all images from Art Director
+  Add the images from Paranormal Researcher Assistant into relevent paragraph
   Adding relevent hashtag at the end of the story.
   According to the story, add in relevent categories
   """,
   expected_output="""
     Output according to the pydantic model
-    story into content in HTML format
+    Story into content in HTML format
     Remove title and featured image in the content output.
     title into title
     category into category
@@ -219,7 +221,8 @@ seoTask = Task(
     image_url as featureImageURL & image_description as featureImageDescription from AIDesigner output
   """,
   agent=seoExpert,
-  output_pydantic=Article
+  output_pydantic=Article,
+  context=[blogWriting, generatingFeatureImage, searchImages]
 )
 
 # Instantiate your crew with a sequential process
