@@ -172,12 +172,9 @@ searchImages = Task(
   Based on the information given
   Search for relavent images for the story's paragraph
   Scrape the website and extract the image URL.
-  Add the image URL below the paragraph 
-  Below the image, add in citation of where is this image being found and credit link back.
   """,
-  expected_output="Full story with the images link between the paragraph with credit.",
+  expected_output="Add the image URL below the paragraph with credit. Below the image, add in citation of where is this image being found and credit link back.",
   agent=designer,
-  context=[ghostlyResearch, detailResearch, detailLocationResearch]
 )
 
 generatingFeatureImage = Task(
@@ -191,7 +188,6 @@ generatingFeatureImage = Task(
   expected_output="Output the Image Link & Description",
   agent=AIDesigner,
   output_pydantic=ArticleImage,
-  context=[ghostlyResearch, detailResearch, detailLocationResearch]
 )
 
 seoTask = Task(
