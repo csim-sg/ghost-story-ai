@@ -20,7 +20,7 @@ researcher = Agent(
   #max_iter=5
 )
 writer = Agent(
-  role='SEO Trained Editor',
+  role='SEO Trained Ghost Story Writer',
   goal='Crafting a very believable story based on the true facts.',
   backstory="""
   You are a creative writer for a online blog. 
@@ -30,7 +30,7 @@ writer = Agent(
 """,
   verbose=True,
   allow_delegation=False,
-  llm=ChatOpenAI(model_name="ft:gpt-4o-mini-2024-07-18:antpolis-pte-ltd:ghost-intern-writer:A7bmQ8jQ", temperature=1.5),
+  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=0.7),
   tools=[search_tool],
 )
 
@@ -90,11 +90,14 @@ ghostBeingResearch = Task(
   - Indonesia Bohmo
   - Chinese 7th months
   - Thailand ghost story
-  Make its not similiar to any stories writen in https://relak.la recently. 
+  - Buddist afterlife culture & story
+  - Taoist ghost culture & story
+  Make sure its not similiar to any stories writen in https://relak.la recently. 
   """,
   expected_output="""
-    The story, ghostly being, culture or research direction, 
-    The story must not be similiar to https://relak.la in the recent 10 posts.
+    Output either 1 ghost story, ghostly being or culture for other tasks to based on
+    Select the output from the web research done.
+    The ghost story, ghostly being or culture must not be similiar to any of the recent 10 posts in https://relak.la.
   """,
   agent=researcher,
   
