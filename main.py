@@ -30,7 +30,7 @@ writer = Agent(
 """,
   verbose=True,
   allow_delegation=False,
-  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.5),
+  llm=ChatOpenAI(model_name="ft:gpt-4o-mini-2024-07-18:antpolis-pte-ltd:ghost-intern-writer:A7bmQ8jQ", temperature=0.5),
   tools=[search_tool],
 )
 
@@ -153,17 +153,16 @@ detailLocationResearch = Task(
 
 blogWriting = Task(
   description="""
-  Based on the information, craft a story based on someone related or yourself.
-  Search for possible SEO Keywords that can be used in the story.
-  The story needs to follow SEO guideline, and scary that can be unrealistic but not too much to unbelievable. 
-  To make it more realistics, add some true facts and history.
-  Avoid complex words or too formal so it doesn't sound like AI.
-  Make it sound like it's being submitted from the public
+  Based on the information,
+  Write an engaging and scary ghost story. Please alter between short and long sentences. Avoid jargon or cliches.
+  Make it realistics with sudden ghostly appearence. The tone of voice should be casual, story telling and slightly conversational.
+  Use burstiness in the sentences. Combining both short and long sentences to create a more human like flow
+  Use human writing like exclamation points and pause. The story can be based on someone else experiences. 
+  The intro should include either an interesting facts, quotation, or something to hook the reader.
+  Avoid did you know. 
   """,
   expected_output="""
-  Full ghost story of at least 5 paragraphs and within 1500 words
-  Include an eye catching & relevent SEO title.
-  The flow of the story should have an introduction of the encounter, what happen, some history of the place & encounter, what happen in the end.
+  Full scary ghost story of at least 5 paragraphs and within 2000 words
   Output the format using the following format
   ## Title ##
 
@@ -232,7 +231,7 @@ crew = Crew(
   verbose=True,
   process = Process.sequential,
   planning = True,
-  planning_llm = ChatOpenAI(model="gpt-3.5-turbo")
+  planning_llm = ChatOpenAI(model="gpt-4o")
 )
 
 # Get your crew to work!
