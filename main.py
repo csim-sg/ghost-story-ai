@@ -20,12 +20,12 @@ researcher = Agent(
   #max_iter=5
 )
 writer = Agent(
-  role='Imaginary Editor',
-  goal='Crafting a very believable story based on some true facts.',
+  role='SEO Trained Editor',
+  goal='Crafting a very believable story based on the true facts.',
   backstory="""
-  You are a creative & imaginary writer for a online blog. 
+  You are a creative writer for a online blog. 
   You work closely with Senior Paranormal Researcher, in getting more information in order to write your story.
-  With the information given by co-worker, you always try to write a believable story.
+  With the information given by co-worker, you will research for possible SEO keyword and incorporate into a believable story.
   In order for your story to be ranked well in Search Engine, you will add keywords, and follow google SEO guideline.
 """,
   verbose=True,
@@ -54,7 +54,7 @@ AIDesigner = Agent(
   backstory="""
   As a AI Art director, your job will be to generate best relevent prompt for Dall-E,
   The images must fit well to the story background, location, ghostly being.
-  You like realistic image generation with a eerie feeling
+  You like realistic image generation with an eerie feeling
 """,
   verbose=True,
   allow_delegation=False,
@@ -71,7 +71,7 @@ seoExpert = Agent(
 """,
   verbose=True,
   llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7),
-  allow_delegation=True
+  allow_delegation=True,
   tools=[search_tool],
 )
 
@@ -79,11 +79,11 @@ ghostBeingResearch = Task(
   description="""
   Search the internet on any ghostly being from Malay & Chinese culture
   The search can be based on the following.
-  Make sure the ghostly being are not being writen in https://relak.la recently. 
   1. Popular ghost location, 
   2. Army ghost story
   3. Infamous ghost
   4. Ghost with long history and popular in the region
+  Make sure the ghostly being are not being writen in https://relak.la recently. 
   """,
   expected_output="""
     The name of the ghostly being, that was not written in https://relak.la in the recent 10 posts.
@@ -175,14 +175,15 @@ blogWriting = Task(
 searchImages = Task(
   description="""
   Given the story, 
-  Search a few relavent images that may fit the theme & the ghostly being in the story
-  Insert the image between paragraphs thats most relevent.
-  Below the image, add in citation of where is this image being found and credit link back.
-  To get the exact link of the image. 
-  Scrape the website and extract the image URL.
+  Search a few relavent images that may fit the theme & the ghostly being in the story  
+  Always find the exact link of the image to use, Scrape the website and extract the image URL.
   """,
-  expected_output="Output the title & the whole story with the images",
+  expected_output="""
+    Output a few images with their original website and which paragraph that this image should be inserted.
+  """,
   agent=designer,
+  async_execution=True,
+  context=[blogWriting]
 )
 
 generatingFeatureImage = Task(
@@ -201,16 +202,17 @@ generatingFeatureImage = Task(
 
 seoTask = Task(
   description="""
+  Making sure the title of the story is SEO friendly & eye catching.
   Read through the story written have relevent SEO keyword
   The flow of the story make sense and not sound too much like AI generated
   Extend or rewrite if it is less than 5 paragraphs or 1500 words excluding title.
-  Always keep all images from Art Director
+  Add the images from Paranormal Researcher Assistant into relevent paragraph
   Adding relevent hashtag at the end of the story.
   According to the story, add in relevent categories
   """,
   expected_output="""
     Output according to the pydantic model
-    story into content in HTML format
+    Story into content in HTML format
     Remove title and featured image in the content output.
     title into title
     category into category
@@ -218,7 +220,8 @@ seoTask = Task(
     image_url as featureImageURL & image_description as featureImageDescription from AIDesigner output
   """,
   agent=seoExpert,
-  output_pydantic=Article
+  output_pydantic=Article,
+  context=[blogWriting, searchImages]
 )
 
 # Instantiate your crew with a sequential process
