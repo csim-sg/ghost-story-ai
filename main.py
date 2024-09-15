@@ -154,16 +154,15 @@ detailLocationResearch = Task(
 blogWriting = Task(
   description="""
   Based on the information,
-  Craft a scary story that can be unrealistic but not too much to unbelievable. 
-  Follow SEO guideline and keyword so it be can be rank better.
-  Adding some backstory and history to make it more realistic
-  Avoid complex words or too formal so it doesn't sound like AI.
-  Make it sound like it's being submitted from the public
+  Write an angaging punchy scary ghost story. Please alter between short and long sentences. Avoid jargon or cliches.
+  Make it scary but not unrealistics. The tone of voice should be casual, story telling and slightly conversational.
+  Use burstiness in the sentences. Combining both short and long sentences to create a more human like flow
+  Use human writing like exclamation points and pause. The story can be based on someone else experiences. 
+  The intro should include either an interesting facts, quotation, or something to hook the reader.
+  Avoid did you know. 
   """,
   expected_output="""
-  Full ghost story of at least 5 paragraphs and within 1500 words
-  Include an eye catching & relevent SEO title.
-  The flow of the story should have an introduction of the encounter, what happen, some history of the place & encounter, what happen in the end.
+  Full scary ghost story of at least 5 paragraphs and within 2000 words
   Output the format using the following format
   ## Title ##
 
@@ -229,7 +228,7 @@ crew = Crew(
   verbose=True,
   process = Process.sequential,
   planning = True,
-  planning_llm = ChatOpenAI(model="gpt-3.5-turbo")
+  planning_llm = ChatOpenAI(model="gpt-4o")
 )
 
 # Get your crew to work!
