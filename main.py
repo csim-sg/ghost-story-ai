@@ -30,7 +30,7 @@ writer = Agent(
 """,
   verbose=True,
   allow_delegation=False,
-  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.5),
+  llm=ChatOpenAI(model_name="ft:gpt-4o-mini-2024-07-18:antpolis-pte-ltd:ghost-intern-writer:A7bmQ8jQ", temperature=0.5),
   tools=[search_tool],
 )
 
