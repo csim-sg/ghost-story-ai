@@ -154,8 +154,8 @@ detailLocationResearch = Task(
 blogWriting = Task(
   description="""
   Based on the information,
-  Write an angaging punchy scary ghost story. Please alter between short and long sentences. Avoid jargon or cliches.
-  Make it scary but not unrealistics. The tone of voice should be casual, story telling and slightly conversational.
+  Write an engaging and scary ghost story. Please alter between short and long sentences. Avoid jargon or cliches.
+  Make it realistics with sudden ghostly appearence. The tone of voice should be casual, story telling and slightly conversational.
   Use burstiness in the sentences. Combining both short and long sentences to create a more human like flow
   Use human writing like exclamation points and pause. The story can be based on someone else experiences. 
   The intro should include either an interesting facts, quotation, or something to hook the reader.
