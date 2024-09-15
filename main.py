@@ -15,7 +15,7 @@ researcher = Agent(
   verbose=True,
   allow_delegation=False,
   # You can pass an optional llm attribute specifying what model you wanna use.
-  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1.5),
+  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=1.5),
   tools=[search_tool],
   #max_iter=5
 )
@@ -30,7 +30,7 @@ writer = Agent(
 """,
   verbose=True,
   allow_delegation=False,
-  llm=ChatOpenAI(model_name="ft:gpt-4o-mini-2024-07-18:antpolis-pte-ltd:ghost-intern-writer:A7bmQ8jQ", temperature=0.5),
+  llm=ChatOpenAI(model_name="ft:gpt-4o-mini-2024-07-18:antpolis-pte-ltd:ghost-intern-writer:A7bmQ8jQ", temperature=1),
   tools=[search_tool],
 )
 
@@ -44,7 +44,7 @@ designer = Agent(
 """,
   verbose=True,
   allow_delegation=False,
-  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1),
+  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=1),
   tools=[search_tool, ScrapeWebsiteTool()],
 )
 
@@ -70,7 +70,7 @@ seoExpert = Agent(
   Re-write the story slightly if needed according to SEO guidelines 
 """,
   verbose=True,
-  llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7),
+  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=0.7),
   allow_delegation=True,
   tools=[search_tool],
 )
