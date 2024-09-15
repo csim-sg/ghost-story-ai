@@ -8,14 +8,14 @@ search_tool = SerperDevTool()
 # Define your agents with roles and goals
 researcher = Agent(
   role='Senior Paranormal Researcher',
-  goal='Research South East Asia paranormal activities & stories',
+  goal='Research Asia paranormal activities & stories',
   backstory="""You work in a small self funded group for paranormal activities.
-  Your expertise lies in spotting paranormal activities in South East Asia 
-  You have deep knowledge and love to research on different ghost being South East Asia religion""",
+  Your expertise lies in spotting paranormal activities in Asia 
+  You have deep knowledge and love to research on different ghost being Asia religion""",
   verbose=True,
   allow_delegation=False,
   # You can pass an optional llm attribute specifying what model you wanna use.
-  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=1.5),
+  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=0.8),
   tools=[search_tool],
   #max_iter=5
 )
@@ -30,7 +30,7 @@ writer = Agent(
 """,
   verbose=True,
   allow_delegation=False,
-  llm=ChatOpenAI(model_name="ft:gpt-4o-mini-2024-07-18:antpolis-pte-ltd:ghost-intern-writer:A7bmQ8jQ", temperature=1),
+  llm=ChatOpenAI(model_name="ft:gpt-4o-mini-2024-07-18:antpolis-pte-ltd:ghost-intern-writer:A7bmQ8jQ", temperature=1.5),
   tools=[search_tool],
 )
 
@@ -70,23 +70,31 @@ seoExpert = Agent(
   Re-write the story slightly if needed according to SEO guidelines 
 """,
   verbose=True,
-  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=0.7),
+  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=1.8),
   allow_delegation=True,
   tools=[search_tool],
 )
 
 ghostBeingResearch = Task(
   description="""
-  Search the internet on any ghostly being from Malay & Chinese culture
-  The search can be based on the following.
-  1. Popular ghost location, 
-  2. Army ghost story
-  3. Infamous ghost
-  4. Ghost with long history and popular in the region
-  Make sure the ghostly being are not being writen in https://relak.la recently. 
+  Search for any ghost story or ghostly lore in Malay or Chinese culture or Buddist or Taoist religion
+  The story or lore should only limit within Japan, China, Taiwan, Singapore, Thailand, Malaysia & Indonesia
+  Some search terms to use but not limited to
+  - Popular ghost location, 
+  - Army ghost story
+  - Infamous ghost
+  - Ghost with long history and popular in the region
+  - MRT ghost sighting
+  - Type of ghosts
+  - Malay thursday night 
+  - Indonesia Bohmo
+  - Chinese 7th months
+  - Thailand ghost story
+  Make its not similiar to any stories writen in https://relak.la recently. 
   """,
   expected_output="""
-    The name of the ghostly being, that was not written in https://relak.la in the recent 10 posts.
+    The story, ghostly being, culture or research direction, 
+    The story must not be similiar to https://relak.la in the recent 10 posts.
   """,
   agent=researcher,
   
@@ -96,19 +104,22 @@ ghostBeingResearch = Task(
 # Create tasks for your agents
 ghostlyResearch = Task(
   description="""
-  Full research on the ghostly being to write and provide the required output
+  Detail research on the given information to write and provide the required output
   """,
   expected_output="""
-  Their Name and alias, characteristics, religion information, their lore in the following format and in bullet points
+  Detail output of the following in bullet points
   ## Name & Alias ##
 
   ## Characteristics ##
 
+  ## History of the ghostly being ##
 
-  ## Religion Information ##
-
+  ## Rumor of where is being sighted ##
+  
+  ## Religion & Culture Information ##
 
   ## Lore ##
+
 
   """,
   agent=researcher,
@@ -118,37 +129,24 @@ ghostlyResearch = Task(
 
 detailResearch = Task(
   description="""
-  From the information given, do a more detail search on the history of the ghostly being.
+  From the information given, search for similiar stories. 
+  Summarised the story and determine any punchy line to use.
+  Do not search for video or audio sites.
+  Only use English or Mandrain sites
   """,
   expected_output="""
-  Full output in the following with bullet points
-  ## History of the ghostly being ##
+  Find 3 similiar stories online and provide the following information.
+  ## URL of the story ##
 
-  ## Rumor of where is being sighted ##
+  ## Summarised information ##
+
+  ## Punch line or keyword to use ##
 
   """,
   agent=researcher,
   async_execution=True,
   context=[ghostBeingResearch]
   
-)
-
-detailLocationResearch = Task(
-  description="""
-  From the information given, do a more detail search on where the ghostly being was being sighted, and any back story or history for the location.
-  """,
-  expected_output="""
-  Full output in the following with bullet points
-  ## History of the location ##
-
-  ## When it happen ##
-  
-  ## Any back story or rumor in the location where its being sighted ##
-
-  """,
-  agent=researcher,
-  async_execution=True,
-  context=[ghostBeingResearch]
 )
 
 blogWriting = Task(
@@ -157,7 +155,7 @@ blogWriting = Task(
   Write an engaging and scary ghost story. Please alter between short and long sentences. Avoid jargon or cliches.
   Make it realistics with sudden ghostly appearence. The tone of voice should be casual, story telling and slightly conversational.
   Use burstiness in the sentences. Combining both short and long sentences to create a more human like flow
-  Use human writing like exclamation points and pause. The story can be based on someone else experiences. 
+  Use human writing like exclamation points and pause. You can mix and match stories from previous task. 
   The intro should include either an interesting facts, quotation, or something to hook the reader.
   Avoid did you know. 
   """,
@@ -169,7 +167,7 @@ blogWriting = Task(
   ## Story ##
   """,
   agent=writer,
-  context=[ghostlyResearch, detailResearch, detailLocationResearch]
+  context=[ghostlyResearch, detailResearch]
 )
 
 searchImages = Task(
@@ -202,32 +200,27 @@ generatingFeatureImage = Task(
 
 seoTask = Task(
   description="""
-  Making sure the title of the story is SEO friendly & eye catching.
-  Read through the story written have relevent SEO keyword
+  Make sure the title and the story are SEO friendly & eye catching. 
+  The title should be related to the story. No over use of keywords.
   The flow of the story make sense and not sound too much like AI generated
-  Extend or rewrite if it is less than 5 paragraphs or 1500 words excluding title.
-  Add the images from Paranormal Researcher Assistant into relevent paragraph
-  Adding relevent hashtag at the end of the story.
-  According to the story, add in relevent categories
+  Inject the images and their website's ref found between paragraphs in the storys that make sense
+
   """,
   expected_output="""
-    Output according to the pydantic model
-    Story into content in HTML format
-    Remove title and featured image in the content output.
-    title into title
-    category into category
-    tags into tags
-    image_url as featureImageURL & image_description as featureImageDescription from AIDesigner output
+    Split the title, story and featured image.
+    Story should be in HTML format
+    Output must always fit into Article Pydantic Model that make sense.
+    Do not add extra value into the fields.
   """,
   agent=seoExpert,
   output_pydantic=Article,
-  context=[blogWriting, searchImages]
+  context=[blogWriting, searchImages, generatingFeatureImage]
 )
 
 # Instantiate your crew with a sequential process
 crew = Crew(
   agents=[researcher, writer, designer, seoExpert, AIDesigner],
-  tasks=[ghostBeingResearch, ghostlyResearch, detailResearch, detailLocationResearch, blogWriting, searchImages, generatingFeatureImage, seoTask],
+  tasks=[ghostBeingResearch, ghostlyResearch, detailResearch, blogWriting, searchImages, generatingFeatureImage, seoTask],
   verbose=True,
   process = Process.sequential,
   planning = True,
@@ -244,4 +237,5 @@ print(taskOut)
 
 print("######### Start posting to Wordpress #########")
 wp = Wordpress()
+
 print(wp.NewArticle(result.pydantic, taskOut.pydantic))
