@@ -2,6 +2,7 @@ from typing import List
 from pydantic import Field, BaseModel
 import requests
 import os
+import markdown
 
 
 
@@ -58,13 +59,13 @@ class Wordpress():
         'attrs[0][caption]': featuredImage.featureImageTitle,
         'attrs[0][description]': featuredImage.featureImageDescription
       }
-    )
-    print(response)
+    )    
     return response.json()
 
   def NewArticle(self, article: Article, featuredImage: ArticleImage):
     token = self.getWordpressToken()
-    imageRes = self.UploadImage(featuredImage=featuredImage, token=token['access_token'])    
+    imageRes = self.UploadImage(featuredImage=featuredImage, token=token['access_token'])
+    hTMLContent = markdown.markdown(article.content)
     response = requests.post(
       f'{wordpressAPIURL}/posts/new',
       headers={
@@ -72,7 +73,7 @@ class Wordpress():
       },
       data = {
         'title': article.title,
-        'content': article.content,
+        'content': hTMLContent,
         'author': 'csimzwalvin',
         'tags': ",".join(article.tags),
         'categories': ",".join(article.categories),

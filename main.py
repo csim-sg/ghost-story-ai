@@ -213,7 +213,7 @@ seoTask = Task(
   """,
   expected_output="""
     Split the title, story and featured image.
-    Full story with images injected should be in HTML format
+    Full story with images injected should be in Markdown
     Output must always fit into Article Pydantic Model that make sense.
     Do not add extra value into the fields.
     Do not cut short the story.
