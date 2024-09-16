@@ -31,7 +31,7 @@ writer = Agent(
 """,
   verbose=True,
   allow_delegation=False,
-  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=0.7),
+  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=1.2),
   tools=[search_tool],
 )
 
@@ -45,7 +45,7 @@ designer = Agent(
 """,
   verbose=True,
   allow_delegation=False,
-  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=1),
+  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=1.2),
   tools=[imageSearchTool],
 )
 
@@ -71,7 +71,7 @@ seoExpert = Agent(
   Sent back to writer for rewrite if the story does not pass the requirement
 """,
   verbose=True,
-  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=1.8),
+  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=0.5),
   allow_delegation=True,
   tools=[search_tool],
 )
@@ -216,7 +216,8 @@ seoTask = Task(
   The title should be related to the story. No over use of keywords.
   The flow of the story make sense and not sound too much like AI generated
   Inject the images and their website's ref found between paragraphs in the storys that make sense
-
+  Make sure the story have at least 5 paragraph or within 2000 words.
+  The story should be in third or first person view.
   """,
   expected_output="""
     Split the title, story and featured image.
