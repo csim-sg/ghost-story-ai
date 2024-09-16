@@ -46,7 +46,7 @@ designer = Agent(
   verbose=True,
   allow_delegation=False,
   llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=1),
-  tools=[imageSearchTool, ScrapeWebsiteTool()],
+  tools=[imageSearchTool],
 )
 
 AIDesigner = Agent(
@@ -156,16 +156,23 @@ detailResearch = Task(
 
 blogWriting = Task(
   description="""
-  Based on the information,
-  Write an engaging and scary ghost story. Please alter between short and long sentences. Avoid jargon or cliches.
+  Based on the information, and subsitute it with ###Information### below
+  Write an engaging and scary ###Information### story. Please alter between short and long sentences. Avoid jargon or cliches.
   Make it realistics with sudden ghostly appearence. The tone of voice should be casual, story telling and slightly conversational.
   Use burstiness in the sentences. Combining both short and long sentences to create a more human like flow
   Use human writing like exclamation points and pause. You can mix and match stories from previous task. 
+  The story should always be from a third or first person point of view.
   The intro should include either an interesting facts, quotation, or something to hook the reader.
   Avoid did you know. 
   """,
   expected_output="""
-  Full scary ghost story of at least 5 paragraphs and within 2000 words
+  Full scary ###Information### story of at least 5 paragraphs and within 2000 words
+  Some of the following elements should be included in the story but not limited
+  - Introduction and lore of the ###Information###
+  - Where it take place, and any backstory to that place
+  - How the encounter happen, include scary scenes
+  - How the main character get away or how the ###Information### is being defeated. 
+  - Conclusion can be the ###Information### still around or no more.
   Output the format using the following format
   ## Title ##
 
