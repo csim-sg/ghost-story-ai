@@ -4,6 +4,7 @@ from langchain_openai import ChatOpenAI
 from wordpress import Article, ArticleImage, Wordpress
 
 search_tool = SerperDevTool()
+imageSearchTool = SerperDevTool(search_url='https://google.serper.dev/images', n_results=20)
 
 # Define your agents with roles and goals
 researcher = Agent(
@@ -30,7 +31,7 @@ writer = Agent(
 """,
   verbose=True,
   allow_delegation=False,
-  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=0.7),
+  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=1.2),
   tools=[search_tool],
 )
 
@@ -44,8 +45,8 @@ designer = Agent(
 """,
   verbose=True,
   allow_delegation=False,
-  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=1),
-  tools=[search_tool, ScrapeWebsiteTool()],
+  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=1.2),
+  tools=[imageSearchTool],
 )
 
 AIDesigner = Agent(
@@ -58,7 +59,7 @@ AIDesigner = Agent(
 """,
   verbose=True,
   allow_delegation=False,
-  tools=[DallETool()],
+  tools=[imageSearchTool, DallETool()],
 )
 
 seoExpert = Agent(
@@ -67,10 +68,10 @@ seoExpert = Agent(
   backstory="""
   You are a Google SEO specialist
   Your job is to think of the title to use for the story that is engaging and SEO friendly
-  Re-write the story slightly if needed according to SEO guidelines 
+  Sent back to writer for rewrite if the story does not pass the requirement
 """,
   verbose=True,
-  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=1.8),
+  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=0.5),
   allow_delegation=True,
   tools=[search_tool],
 )
@@ -132,10 +133,11 @@ ghostlyResearch = Task(
 
 detailResearch = Task(
   description="""
-  From the information given, search for similiar stories. 
+  From the information given, search for related stories. 
   Summarised the story and determine any punchy line to use.
   Do not search for video or audio sites.
   Only use English or Mandrain sites
+  Stories found must be related to the information. Do not expand to others
   """,
   expected_output="""
   Find 3 similiar stories online and provide the following information.
@@ -154,16 +156,23 @@ detailResearch = Task(
 
 blogWriting = Task(
   description="""
-  Based on the information,
-  Write an engaging and scary ghost story. Please alter between short and long sentences. Avoid jargon or cliches.
+  Based on the information, and subsitute it with ###Information### below
+  Write an engaging and scary ###Information### story. Please alter between short and long sentences. Avoid jargon or cliches.
   Make it realistics with sudden ghostly appearence. The tone of voice should be casual, story telling and slightly conversational.
   Use burstiness in the sentences. Combining both short and long sentences to create a more human like flow
   Use human writing like exclamation points and pause. You can mix and match stories from previous task. 
+  The story should always be from a third or first person point of view.
   The intro should include either an interesting facts, quotation, or something to hook the reader.
   Avoid did you know. 
   """,
   expected_output="""
-  Full scary ghost story of at least 5 paragraphs and within 2000 words
+  Full scary ###Information### story of at least 5 paragraphs and within 2000 words
+  Some of the following elements should be included in the story but not limited
+  - Introduction and lore of the ###Information###
+  - Where it take place, and any backstory to that place
+  - How the encounter happen, include scary scenes
+  - How the main character get away or how the ###Information### is being defeated. 
+  - Conclusion can be the ###Information### still around or no more.
   Output the format using the following format
   ## Title ##
 
@@ -176,7 +185,7 @@ blogWriting = Task(
 searchImages = Task(
   description="""
   Given the story, 
-  Search a few relavent images that may fit the theme & the ghostly being in the story  
+  Do a google image search that may fit the theme & the ghostly being in the story  
   Always find the exact link of the image to use, Scrape the website and extract the image URL.
   """,
   expected_output="""
@@ -190,12 +199,12 @@ searchImages = Task(
 generatingFeatureImage = Task(
   description="""
   With the given story, generate a feature image that can be used with the 
-  The image need to fit the information of the ghost
+  The image need to fit the information of the ghost, you can search the intenet for find how the ghost looks like
   The background setting of the image need to align with the lore & location of where is happen.
   The image should be realistic but not too scary. 
   Don't add word in the image
   """,
-  expected_output="Output the Image Link & Description",
+  expected_output="Output the Image Link & Description, the size of the image set as width 1024px, height 800px",
   agent=AIDesigner,
   async_execution=True,
   output_pydantic=ArticleImage,
@@ -207,13 +216,15 @@ seoTask = Task(
   The title should be related to the story. No over use of keywords.
   The flow of the story make sense and not sound too much like AI generated
   Inject the images and their website's ref found between paragraphs in the storys that make sense
-
+  Make sure the story have at least 5 paragraph or within 2000 words.
+  The story should be in third or first person view.
   """,
   expected_output="""
     Split the title, story and featured image.
-    Story should be in HTML format
+    Full story with images injected should be in Markdown
     Output must always fit into Article Pydantic Model that make sense.
     Do not add extra value into the fields.
+    Do not cut short the story.
   """,
   agent=seoExpert,
   output_pydantic=Article,
