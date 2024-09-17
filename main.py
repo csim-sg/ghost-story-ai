@@ -159,6 +159,8 @@ blogWriting = Task(
   Based on the information, and subsitute it with ###Information### below
   Write an engaging and scary ###Information### story. Please alter between short and long sentences. Avoid jargon or cliches.
   Make it realistics with sudden ghostly appearence. The tone of voice should be casual, story telling and slightly conversational.
+  The story must have some reference or facts from the ###Information###.
+  Do not make up place name, ghost name or culture.
   Use burstiness in the sentences. Combining both short and long sentences to create a more human like flow
   Use human writing like exclamation points and pause. You can mix and match stories from previous task. 
   The story should always be from a third or first person point of view.
@@ -174,9 +176,13 @@ blogWriting = Task(
   - How the main character get away or how the ###Information### is being defeated. 
   - Conclusion can be the ###Information### still around or no more.
   Output the format using the following format
-  ## Title ##
+  [Title]
 
-  ## Story ##
+  [/Title]
+
+  [Story]
+
+  [/Story]
   """,
   agent=writer,
   context=[ghostlyResearch, detailResearch]
@@ -212,9 +218,11 @@ generatingFeatureImage = Task(
 
 seoTask = Task(
   description="""
-  Make sure the title and the story are SEO friendly & eye catching. 
-  The title should be related to the story. No over use of keywords.
-  The flow of the story make sense and not sound too much like AI generated
+  With the given title and story,
+  Make sure the title and the story are SEO friendly & eye catching & within 25 words
+  The title should be related to the story. 
+  Base on the ghostlyResearch & detailResearch, the subject or main charactor should make sense with the research.
+  The story should have basis from the research and not sound too much like AI generated
   Inject the images and their website's ref found between paragraphs in the storys that make sense
   Make sure the story have at least 5 paragraph or within 2000 words.
   The story should be in third or first person view.
@@ -228,7 +236,7 @@ seoTask = Task(
   """,
   agent=seoExpert,
   output_pydantic=Article,
-  context=[blogWriting, searchImages, generatingFeatureImage]
+  context=[ghostlyResearch, detailResearch, blogWriting, searchImages, generatingFeatureImage]
 )
 
 # Instantiate your crew with a sequential process
