@@ -196,6 +196,12 @@ searchImages = Task(
   """,
   expected_output="""
     Output a few images with their original website and which paragraph that this image should be inserted.
+    Each of them in the following format
+    [image]
+      [image url][/image url]
+      [alt text][/alt text]
+      [source website url][/source website url]
+    [/image]
   """,
   agent=designer,
   async_execution=True,
@@ -223,6 +229,7 @@ seoTask = Task(
   The title should be related to the story. 
   Base on the ghostlyResearch & detailResearch, the subject or main charactor should make sense with the research.
   The story should have basis from the research and not sound too much like AI generated
+  Base on the searchImages task images output
   Inject the images and their website's ref found between paragraphs in the storys that make sense
   Make sure the story have at least 5 paragraph or within 2000 words.
   The story should be in third or first person view.
