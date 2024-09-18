@@ -1,6 +1,7 @@
 from crewai import Agent, Task, Crew, Process
 from crewai_tools import SerperDevTool, DallETool, ScrapeWebsiteTool
 from langchain_openai import ChatOpenAI
+from tools import IsTermWrittenBefore
 from wordpress import Article, ArticleImage, Wordpress
 
 search_tool = SerperDevTool()
@@ -17,6 +18,22 @@ researcher = Agent(
   allow_delegation=False,
   # You can pass an optional llm attribute specifying what model you wanna use.
   llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=0.8),
+  tools=[search_tool, IsTermWrittenBefore],
+  #max_iter=5
+)
+
+juniorResearcher = Agent(
+  role='Junior Paranormal Researcher',
+  goal='Help Senior Researcher expend his research with details.',
+  backstory="""
+    You report to the senior researcher in the company. 
+    Your job is to assist senior researcher on his original research and search more details so writer and editor can use your work to finish their job.
+    You don't search for irrelevent term beyond what senior researcher provide.
+  """,
+  verbose=True,
+  allow_delegation=False,
+  # You can pass an optional llm attribute specifying what model you wanna use.
+  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=1.5),
   tools=[search_tool],
   #max_iter=5
 )
@@ -59,7 +76,9 @@ AIDesigner = Agent(
 """,
   verbose=True,
   allow_delegation=False,
-  tools=[imageSearchTool, DallETool()],
+  tools=[imageSearchTool, DallETool(
+    size="1024x800",
+  )],
 )
 
 seoExpert = Agent(
@@ -126,7 +145,7 @@ ghostlyResearch = Task(
 
 
   """,
-  agent=researcher,
+  agent=juniorResearcher,
   async_execution=True,
   context=[ghostBeingResearch]
 )
@@ -148,7 +167,7 @@ detailResearch = Task(
   ## Punch line or keyword to use ##
 
   """,
-  agent=researcher,
+  agent=juniorResearcher,
   async_execution=True,
   context=[ghostBeingResearch]
   
@@ -216,7 +235,7 @@ generatingFeatureImage = Task(
   The image should be realistic but not too scary. 
   Don't add word in the image
   """,
-  expected_output="Output the Image Link & Description, the size of the image set as width 1024px, height 800px",
+  expected_output="Output the Image Link & Description",
   agent=AIDesigner,
   async_execution=True,
   output_pydantic=ArticleImage,
@@ -231,11 +250,13 @@ seoTask = Task(
   The story should have basis from the research and not sound too much like AI generated
   Base on the searchImages task images output
   Inject the images and their website's ref found between paragraphs in the storys that make sense
+  Do not inject featured images from generatingFeatureImage task into the story.
   Make sure the story have at least 5 paragraph or within 2000 words.
   The story should be in third or first person view.
+  
   """,
   expected_output="""
-    Split the title, story and featured image.
+    Remove title and featured images from the story
     Full story with images injected should be in Markdown
     Output must always fit into Article Pydantic Model that make sense.
     Do not add extra value into the fields.
@@ -248,7 +269,7 @@ seoTask = Task(
 
 # Instantiate your crew with a sequential process
 crew = Crew(
-  agents=[researcher, writer, designer, seoExpert, AIDesigner],
+  agents=[researcher, juniorResearcher, writer, designer, seoExpert, AIDesigner],
   tasks=[ghostBeingResearch, ghostlyResearch, detailResearch, blogWriting, searchImages, generatingFeatureImage, seoTask],
   verbose=True,
   process = Process.sequential,

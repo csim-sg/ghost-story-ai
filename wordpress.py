@@ -18,7 +18,7 @@ wordpressAPIURL = f'https://public-api.wordpress.com/rest/v1.1/sites/{blogDomain
 
 class Article(BaseModel):
   title: str = Field(title="Title")
-  content: str = Field(title="Content", description="string in HTML format")
+  content: str = Field(title="Story", description="story in markdown format. Including images between the paragaph")
   tags: List[str] = Field(title="Tags")
   categories: List[str] = Field(title="categories")
   featureImageURL: str = Field(title="image_url")
@@ -31,6 +31,12 @@ class ArticleImage(BaseModel):
   featureImageDescription: str = Field(description="Description used to generate the image")
 
 class Wordpress():
+
+  def getArticles(self, searchTerm, afterDate):
+    response = requests.get(
+      f'{wordpressAPIURL}/posts?search={searchTerm}&after={afterDate}'
+    )
+    return response.json()
 
   def getWordpressToken(self):
     response = requests.post(
