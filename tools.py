@@ -1,7 +1,5 @@
 from crewai_tools import tool
-import os
 from datetime import datetime, timedelta
-
 from wordpress import Wordpress
 
 
@@ -15,6 +13,6 @@ def IsTermWrittenBefore(storyTerm: str, days: int=10) -> bool:
     # Function logic here
     wp = Wordpress()
     subDays = timedelta(days=days)
-    afterDate = datetime.datetime.now() - subDays
+    afterDate = datetime.now() - subDays
     articles = wp.getArticles(searchTerm=storyTerm, afterDate=afterDate)
     return len(articles)>0
