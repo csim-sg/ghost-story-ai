@@ -39,18 +39,22 @@ class Wordpress():
     return token.decode('utf-8')
 
   def UploadImage(self, featuredImage: ArticleImage, token: str):
-    print(f'{wordpressAPIURL}/media/new') 
+    print(f'{wordpressAPIURL}/media') 
+    r = requests.get(featuredImage.featureImageURL, allow_redirects=True)
+    open('featuredImage.png', 'wb').write(r.content)
     response = requests.post(
-      f'{wordpressAPIURL}/media/new',
+      f'{wordpressAPIURL}/media',
       headers={
-        "Authorization": "Basic {}".format(token)
+        "Authorization": "Basic {}".format(token),
+        "Content-Type": "image/png",
+        "Accept": "application/json",
+        'Content-Disposition': "attachment; filename=%s.png" % featuredImage.featureImageTitle,
       },
       data = {
-        'media_urls[]': featuredImage.featureImageURL,
-        'attrs[0][title]': featuredImage.featureImageTitle,
-        'attrs[0][alt]': featuredImage.featureImageTitle,
-        'attrs[0][caption]': featuredImage.featureImageTitle,
-        'attrs[0][description]': featuredImage.featureImageDescription
+        'file': r.content,
+        'title': featuredImage.featureImageTitle,
+        'description': featuredImage.featureImageDescription,
+        'caption': featuredImage.featureImageDescription
       }
     )    
     return response.json()
@@ -60,7 +64,7 @@ class Wordpress():
     imageRes = self.UploadImage(featuredImage=featuredImage, token=token)
     hTMLContent = markdown.markdown(article.content)
     response = requests.post(
-      f'{wordpressAPIURL}/posts/new',
+      f'{wordpressAPIURL}/posts',
       headers={
         "Authorization": "Basic {}".format(token)
       },
@@ -70,7 +74,7 @@ class Wordpress():
         'author': 'Alvin Sim',
         'tags': ",".join(article.tags),
         'categories': ",".join(article.categories),
-        'featured_image': imageRes['media'][0]['ID']
+        'featured_image': imageRes['ID']
       }
     )
     return response

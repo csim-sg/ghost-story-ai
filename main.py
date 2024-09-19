@@ -77,7 +77,7 @@ AIDesigner = Agent(
   verbose=True,
   allow_delegation=False,
   tools=[imageSearchTool, DallETool(
-    size="1024x800",
+    size="1024x1024",
   )],
 )
 
