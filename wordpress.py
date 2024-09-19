@@ -64,7 +64,9 @@ class Wordpress():
   def NewArticle(self, article: Article, featuredImage: ArticleImage):
     token = self.getWordpressToken()
     imageRes = self.UploadImage(featuredImage=featuredImage, token=token)
+    print(imageRes)
     hTMLContent = markdown.markdown(article.content)
+    print(hTMLContent)
     response = requests.post(
       f'{wordpressAPIURL}/posts',
       headers={
@@ -73,9 +75,8 @@ class Wordpress():
       data = {
         'title': article.title,
         'content': hTMLContent,
-        'author': 2,
-        'tags': ",".join(article.tags),
-        'categories': ",".join(article.categories),
+        'tags': article.tags,
+        'categories': article.categories,
         'featured_media': imageRes['id'],
         'status': 'publish'
       }
