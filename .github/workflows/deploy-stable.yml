@@ -32,3 +32,4 @@ jobs:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         OPENAI_ORGANIZATION: ${{ secrets.OPENAI_ORGANIZATION }}
         OPENAI_MODEL_NAME:  ${{ secrets.OPENAI_MODEL_NAME }}
+        WP_DOMAIN: ${{ secrets.WP_DOMAIN }}
