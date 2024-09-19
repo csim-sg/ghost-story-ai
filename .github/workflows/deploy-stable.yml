@@ -5,6 +5,9 @@ name: Run the python code
 
 on:
   workflow_dispatch:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '30 18 * * *'
 
 jobs:
   build:
@@ -13,24 +16,23 @@ jobs:
     environment: "steady"
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python 3.11
+    - name: Set up Python 3.12
       uses: actions/setup-python@v3
       with:
-        python-version: "3.11"
+        python-version: "3.12"
     - name: Install dependencies
       run: |
         RUN apt-get update --fix-missing && apt-get install -y --fix-missing build-essential
-        python -m pip install --upgrade pip
-        pip install crewai "crewai[tools]"
+        python -m pip install --upgrade pip setuptools
+        pip install crewai "crewai[tools]" markdown
     - name: Run the crew
       run: |
         python main.py
       env: 
-        WP_CLIENT_ID: ${{ secrets.WP_CLIENT_ID }}
-        WP_CLIENT_SECRET: ${{ secrets.WP_CLIENT_SECRET }}
         WP_USERNAME: ${{ secrets.WP_USERNAME }}
         WP_PASSWORD: ${{ secrets.WP_PASSWORD }}
         SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         OPENAI_ORGANIZATION: ${{ secrets.OPENAI_ORGANIZATION }}
         OPENAI_MODEL_NAME:  ${{ secrets.OPENAI_MODEL_NAME }}
+        WP_DOMAIN: ${{ secrets.WP_DOMAIN }}
