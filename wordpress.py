@@ -73,10 +73,11 @@ class Wordpress():
       data = {
         'title': article.title,
         'content': hTMLContent,
-        'author': 'Alvin Sim',
+        'author': 2,
         'tags': ",".join(article.tags),
         'categories': ",".join(article.categories),
-        'featured_image': imageRes['id']
+        'featured_media': imageRes['id'],
+        'status': 'publish'
       }
     )
     return response
