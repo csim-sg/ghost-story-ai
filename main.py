@@ -1,6 +1,7 @@
 from crewai import Agent, Task, Crew, Process
 from crewai_tools import SerperDevTool, DallETool, ScrapeWebsiteTool
 from langchain_openai import ChatOpenAI
+from tools import IsTermWrittenBefore
 from wordpress import Article, ArticleImage, Wordpress
 
 search_tool = SerperDevTool()
@@ -17,6 +18,22 @@ researcher = Agent(
   allow_delegation=False,
   # You can pass an optional llm attribute specifying what model you wanna use.
   llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=0.8),
+  tools=[search_tool, IsTermWrittenBefore],
+  #max_iter=5
+)
+
+juniorResearcher = Agent(
+  role='Junior Paranormal Researcher',
+  goal='Help Senior Researcher expend his research with details.',
+  backstory="""
+    You report to the senior researcher in the company. 
+    Your job is to assist senior researcher on his original research and search more details so writer and editor can use your work to finish their job.
+    You don't search for irrelevent term beyond what senior researcher provide.
+  """,
+  verbose=True,
+  allow_delegation=False,
+  # You can pass an optional llm attribute specifying what model you wanna use.
+  llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=1.5),
   tools=[search_tool],
   #max_iter=5
 )
@@ -59,16 +76,19 @@ AIDesigner = Agent(
 """,
   verbose=True,
   allow_delegation=False,
-  tools=[imageSearchTool, DallETool()],
+  tools=[imageSearchTool, DallETool(
+    size="1024x1024",
+  )],
 )
 
 seoExpert = Agent(
   role='Chief Editor',
   goal='Having the most SEO friendly title and story',
   backstory="""
-  You are a Google SEO specialist
-  Your job is to think of the title to use for the story that is engaging and SEO friendly
-  Sent back to writer for rewrite if the story does not pass the requirement
+  You are a Google SEO specialist & Chief Editor
+  Your job is to make sure the title and story from writer not sound too much like AI generated
+  The title should be eye-catching and SEO friendly
+  You also will insert those images from Paranormal Researcher Assistant between relevent paragraph so the story flow can be more engaging
 """,
   verbose=True,
   llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=0.5),
@@ -109,6 +129,7 @@ ghostBeingResearch = Task(
 ghostlyResearch = Task(
   description="""
   Detail research on the given information to write and provide the required output
+  Only research based on the output from ghostBeingResearch tasks. Do not irrelevent topic
   """,
   expected_output="""
   Detail output of the following in bullet points
@@ -126,7 +147,7 @@ ghostlyResearch = Task(
 
 
   """,
-  agent=researcher,
+  agent=juniorResearcher,
   async_execution=True,
   context=[ghostBeingResearch]
 )
@@ -148,7 +169,7 @@ detailResearch = Task(
   ## Punch line or keyword to use ##
 
   """,
-  agent=researcher,
+  agent=juniorResearcher,
   async_execution=True,
   context=[ghostBeingResearch]
   
@@ -159,6 +180,8 @@ blogWriting = Task(
   Based on the information, and subsitute it with ###Information### below
   Write an engaging and scary ###Information### story. Please alter between short and long sentences. Avoid jargon or cliches.
   Make it realistics with sudden ghostly appearence. The tone of voice should be casual, story telling and slightly conversational.
+  The story must have some reference or facts from the ###Information###.
+  Do not make up place name, ghost name or culture.
   Use burstiness in the sentences. Combining both short and long sentences to create a more human like flow
   Use human writing like exclamation points and pause. You can mix and match stories from previous task. 
   The story should always be from a third or first person point of view.
@@ -174,9 +197,13 @@ blogWriting = Task(
   - How the main character get away or how the ###Information### is being defeated. 
   - Conclusion can be the ###Information### still around or no more.
   Output the format using the following format
-  ## Title ##
+  [Title]
 
-  ## Story ##
+  [/Title]
+
+  [Story]
+
+  [/Story]
   """,
   agent=writer,
   context=[ghostlyResearch, detailResearch]
@@ -184,12 +211,18 @@ blogWriting = Task(
 
 searchImages = Task(
   description="""
-  Given the story, 
+  Given the story from blogWriting tasks
   Do a google image search that may fit the theme & the ghostly being in the story  
   Always find the exact link of the image to use, Scrape the website and extract the image URL.
   """,
   expected_output="""
     Output a few images with their original website and which paragraph that this image should be inserted.
+    Each of them in the following format
+    [image]
+      [image url][/image url]
+      [alt text][/alt text]
+      [source website url][/source website url]
+    [/image]
   """,
   agent=designer,
   async_execution=True,
@@ -204,7 +237,7 @@ generatingFeatureImage = Task(
   The image should be realistic but not too scary. 
   Don't add word in the image
   """,
-  expected_output="Output the Image Link & Description, the size of the image set as width 1024px, height 800px",
+  expected_output="Output the Image Link & Description",
   agent=AIDesigner,
   async_execution=True,
   output_pydantic=ArticleImage,
@@ -212,15 +245,23 @@ generatingFeatureImage = Task(
 
 seoTask = Task(
   description="""
-  Make sure the title and the story are SEO friendly & eye catching. 
-  The title should be related to the story. No over use of keywords.
-  The flow of the story make sense and not sound too much like AI generated
-  Inject the images and their website's ref found between paragraphs in the storys that make sense
-  Make sure the story have at least 5 paragraph or within 2000 words.
-  The story should be in third or first person view.
+  With the given title and story,
+  Make sure the title and the story are SEO friendly & eye catching & within 25 words
+  The title should be related to the story. 
+  The story must be relevent to ghostlyResearch & detailResearch task.
+  Below are dos and don'ts that need to follow strictly
+  Don'ts
+    - Dont rewrite of the story
+    - Dont inject featured images from generatingFeatureImage task into the story.
+  Dos
+    - Minor adjustments to make the story more engaging.
+    - Inject images from searchImages task between relevent paragraph
+    - Make sure the story have at least 5 paragraph or within 2000 words.
+    - The story should be in third or first person view.
+    - Think of relevent tags & category based on the story
   """,
   expected_output="""
-    Split the title, story and featured image.
+    Remove title and featured images from the story
     Full story with images injected should be in Markdown
     Output must always fit into Article Pydantic Model that make sense.
     Do not add extra value into the fields.
@@ -228,12 +269,12 @@ seoTask = Task(
   """,
   agent=seoExpert,
   output_pydantic=Article,
-  context=[blogWriting, searchImages, generatingFeatureImage]
+  context=[ghostlyResearch, detailResearch, blogWriting, searchImages, generatingFeatureImage]
 )
 
 # Instantiate your crew with a sequential process
 crew = Crew(
-  agents=[researcher, writer, designer, seoExpert, AIDesigner],
+  agents=[researcher, juniorResearcher, writer, designer, seoExpert, AIDesigner],
   tasks=[ghostBeingResearch, ghostlyResearch, detailResearch, blogWriting, searchImages, generatingFeatureImage, seoTask],
   verbose=True,
   process = Process.sequential,
