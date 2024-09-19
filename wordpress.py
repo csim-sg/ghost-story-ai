@@ -47,6 +47,9 @@ class Wordpress():
     else:
       response = requests.post(
         f'{wordpressAPIURL}/{termType}',
+        headers={
+          "Authorization": "Basic {}".format(self.getWordpressToken())
+        },
         data={
           "name": termName
         }
