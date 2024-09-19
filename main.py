@@ -113,7 +113,7 @@ ghostBeingResearch = Task(
   - Thailand ghost story
   - Buddist afterlife culture & story
   - Taoist ghost culture & story
-  Make sure its not similiar to any stories writen in https://relak.la recently. 
+  Once a topic is found, search the topic in relak.la to make sure its not similiar to any stories writen recently. 
   """,
   expected_output="""
     Output either 1 ghost story, ghostly being or culture for other tasks to based on

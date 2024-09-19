@@ -5,9 +5,9 @@ import requests
 import os
 import markdown
 
-username = 'Alvin Sim' #os.environ['WP_USERNAME']
-password = 'E27B emJA wkgQ U7Zm Oxy4 u9Fs' #os.environ['WP_PASSWORD']
-blogDomain = 'relak.la'#os.environ['WP_DOMAIN']
+username = os.environ['WP_USERNAME']
+password = os.environ['WP_PASSWORD']
+blogDomain = os.environ['WP_DOMAIN']
 
 wordpressAPIURL = f'https://{blogDomain}/wp-json/wp/v2'
 
