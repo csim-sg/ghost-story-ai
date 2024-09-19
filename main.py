@@ -211,7 +211,7 @@ blogWriting = Task(
 
 searchImages = Task(
   description="""
-  Given the story, 
+  Given the story from blogWriting tasks
   Do a google image search that may fit the theme & the ghostly being in the story  
   Always find the exact link of the image to use, Scrape the website and extract the image URL.
   """,
