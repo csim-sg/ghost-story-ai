@@ -5,9 +5,9 @@ name: Run the python code
 
 on:
   workflow_dispatch:
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron:  '30 18 * * *'
+  # schedule:
+  #   # * is a special character in YAML so you have to quote this string
+  #   - cron:  '30 18 * * *'
 
 jobs:
   build:
