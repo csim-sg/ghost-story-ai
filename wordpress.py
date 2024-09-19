@@ -42,7 +42,7 @@ class Wordpress():
     response = requests.get(
       f'{wordpressAPIURL}/{termType}?search={termName}'
     )
-    if(response.ok):
+    if(response.ok and len(response.json()) > 0):
       return [data for data in response.json() if data['name'].lower() == termName.lower()][0]
     else:
       response = requests.post(
@@ -116,6 +116,7 @@ class Wordpress():
     return response
   
 # wp = Wordpress()
+# wp.getTerm("")
 # image = ArticleImage
 # image.featureImageURL= 'https://miro.medium.com/v2/resize:fit:300/1*DHilTwLnzy84S1PJznQ4FQ.png'
 # image.featureImageTitle = 'testing'
