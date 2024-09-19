@@ -37,6 +37,22 @@ class Wordpress():
     credentials = username + ':' + password
     token = base64.b64encode(credentials.encode())
     return token.decode('utf-8')
+  
+  def getTerm(self, termName, termType):
+    response = requests.get(
+      f'{wordpressAPIURL}/{termType}?search={termName}'
+    )
+    if(response.ok):
+      return [data for data in response.json() if data['name'].lower() == termName.lower()][0]
+    else:
+      response = requests.post(
+        f'{wordpressAPIURL}/{termType}',
+        data={
+          "name": termName
+        }
+      )
+      return response.json()
+    
 
   def UploadImage(self, featuredImage: ArticleImage, token: str):
     print(f'{wordpressAPIURL}/media') 
@@ -67,6 +83,19 @@ class Wordpress():
     print(imageRes)
     hTMLContent = markdown.markdown(article.content)
     print(hTMLContent)
+
+    catIDs = []
+    tagIDs = []
+
+    for category in article.categories: 
+      catReturn = self.getTerm(category, "categories")
+      if catReturn:
+        catIDs.append(catReturn['id'])
+    for tag in article.tags: 
+      tagReturn = self.getTerm(tag, "tags")
+      if tagReturn:
+        tagIDs.append(tagReturn['id'])
+
     response = requests.post(
       f'{wordpressAPIURL}/posts',
       headers={
@@ -75,8 +104,8 @@ class Wordpress():
       data = {
         'title': article.title,
         'content': hTMLContent,
-        'tags': article.tags,
-        'categories': article.categories,
+        'tags': tagIDs,
+        'categories': catIDs,
         'featured_media': imageRes['id'],
         'status': 'publish'
       }
