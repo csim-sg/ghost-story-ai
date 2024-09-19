@@ -56,12 +56,14 @@ class Wordpress():
         'description': featuredImage.featureImageDescription,
         'caption': featuredImage.featureImageDescription
       }
-    )    
+    )
+    print(response.text)
     return response.json()
 
   def NewArticle(self, article: Article, featuredImage: ArticleImage):
     token = self.getWordpressToken()
     imageRes = self.UploadImage(featuredImage=featuredImage, token=token)
+    print(imageRes)
     hTMLContent = markdown.markdown(article.content)
     response = requests.post(
       f'{wordpressAPIURL}/posts',
