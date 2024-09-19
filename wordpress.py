@@ -1,20 +1,15 @@
+import base64
 from typing import List
 from pydantic import Field, BaseModel
 import requests
 import os
 import markdown
 
-
-
-wordpressAuthURL = 'https://public-api.wordpress.com/oauth2/token'
-
-clientID = os.environ['WP_CLIENT_ID']
-clientSecret = os.environ['WP_CLIENT_SECRET']
 username = os.environ['WP_USERNAME']
 password = os.environ['WP_PASSWORD']
 blogDomain = os.environ['WP_DOMAIN']
 
-wordpressAPIURL = f'https://public-api.wordpress.com/rest/v1.1/sites/{blogDomain}'
+wordpressAPIURL = f'https://{blogDomain}/wp-json/wp/v2'
 
 class Article(BaseModel):
   title: str = Field(title="Title")
@@ -39,24 +34,16 @@ class Wordpress():
     return response.json()
 
   def getWordpressToken(self):
-    response = requests.post(
-      wordpressAuthURL,
-      data = {
-        'client_id': clientID,
-        'client_secret': clientSecret,
-        'grant_type': 'password',
-        'username': username,
-        'password': password,
-      }
-    )
-    return response.json()
+    credentials = username + ':' + password
+    token = base64.b64encode(credentials.encode())
+    return token.decode('utf-8')
 
   def UploadImage(self, featuredImage: ArticleImage, token: str):
     print(f'{wordpressAPIURL}/media/new') 
     response = requests.post(
       f'{wordpressAPIURL}/media/new',
       headers={
-        "Authorization": "BEARER {}".format(token)
+        "Authorization": "Basic {}".format(token)
       },
       data = {
         'media_urls[]': featuredImage.featureImageURL,
@@ -70,17 +57,17 @@ class Wordpress():
 
   def NewArticle(self, article: Article, featuredImage: ArticleImage):
     token = self.getWordpressToken()
-    imageRes = self.UploadImage(featuredImage=featuredImage, token=token['access_token'])
+    imageRes = self.UploadImage(featuredImage=featuredImage, token=token)
     hTMLContent = markdown.markdown(article.content)
     response = requests.post(
       f'{wordpressAPIURL}/posts/new',
       headers={
-        "Authorization": "BEARER {}".format(token['access_token'])
+        "Authorization": "Basic {}".format(token)
       },
       data = {
         'title': article.title,
         'content': hTMLContent,
-        'author': 'csimzwalvin',
+        'author': 'Alvin Sim',
         'tags': ",".join(article.tags),
         'categories': ",".join(article.categories),
         'featured_image': imageRes['media'][0]['ID']

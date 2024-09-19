@@ -85,9 +85,10 @@ seoExpert = Agent(
   role='Chief Editor',
   goal='Having the most SEO friendly title and story',
   backstory="""
-  You are a Google SEO specialist
-  Your job is to think of the title to use for the story that is engaging and SEO friendly
-  Sent back to writer for rewrite if the story does not pass the requirement
+  You are a Google SEO specialist & Chief Editor
+  Your job is to make sure the title and story from writer not sound too much like AI generated
+  The title should be eye-catching and SEO friendly
+  You also will insert those images from Paranormal Researcher Assistant between relevent paragraph so the story flow can be more engaging
 """,
   verbose=True,
   llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=0.5),
@@ -128,6 +129,7 @@ ghostBeingResearch = Task(
 ghostlyResearch = Task(
   description="""
   Detail research on the given information to write and provide the required output
+  Only research based on the output from ghostBeingResearch tasks. Do not irrelevent topic
   """,
   expected_output="""
   Detail output of the following in bullet points
@@ -246,14 +248,17 @@ seoTask = Task(
   With the given title and story,
   Make sure the title and the story are SEO friendly & eye catching & within 25 words
   The title should be related to the story. 
-  Base on the ghostlyResearch & detailResearch, the subject or main charactor should make sense with the research.
-  The story should have basis from the research and not sound too much like AI generated
-  Base on the searchImages task images output
-  Inject the images and their website's ref found between paragraphs in the storys that make sense
-  Do not inject featured images from generatingFeatureImage task into the story.
-  Make sure the story have at least 5 paragraph or within 2000 words.
-  The story should be in third or first person view.
-  
+  The story must be relevent to ghostlyResearch & detailResearch task.
+  Below are dos and don'ts that need to follow strictly
+  Don'ts
+    - Dont rewrite of the story
+    - Dont inject featured images from generatingFeatureImage task into the story.
+  Dos
+    - Minor adjustments to make the story more engaging.
+    - Inject images from searchImages task between relevent paragraph
+    - Make sure the story have at least 5 paragraph or within 2000 words.
+    - The story should be in third or first person view.
+    - Think of relevent tags & category based on the story
   """,
   expected_output="""
     Remove title and featured images from the story
