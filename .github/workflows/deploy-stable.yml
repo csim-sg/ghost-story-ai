@@ -23,7 +23,6 @@ jobs:
         cache: 'pip' # caching pip dependencies
     - name: Install dependencies
       run: |
-        RUN apt-get update --fix-missing && apt-get install -y --fix-missing build-essential
         python -m pip install --upgrade pip setuptools
         pip install crewai "crewai[tools]" markdown
     - name: Run the crew

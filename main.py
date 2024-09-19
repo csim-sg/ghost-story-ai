@@ -253,6 +253,7 @@ seoTask = Task(
   Don'ts
     - Dont rewrite of the story
     - Dont inject featured images from generatingFeatureImage task into the story.
+    - Dont add the title into the story
   Dos
     - Minor adjustments to make the story more engaging.
     - Inject images from searchImages task between relevent paragraph

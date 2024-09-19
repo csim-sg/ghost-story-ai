@@ -43,18 +43,20 @@ class Wordpress():
       f'{wordpressAPIURL}/{termType}?search={termName}'
     )
     if(response.ok and len(response.json()) > 0):
-      return [data for data in response.json() if data['name'].lower() == termName.lower()][0]
-    else:
-      response = requests.post(
-        f'{wordpressAPIURL}/{termType}',
-        headers={
-          "Authorization": "Basic {}".format(self.getWordpressToken())
-        },
-        data={
-          "name": termName
-        }
-      )
-      return response.json()
+      foundCat = [data for data in response.json() if data['name'].lower() == termName.lower()]
+      if len(foundCat) > 0:
+        return foundCat
+      
+    response = requests.post(
+      f'{wordpressAPIURL}/{termType}',
+      headers={
+        "Authorization": "Basic {}".format(self.getWordpressToken())
+      },
+      data={
+        "name": termName
+      }
+    )
+    return response.json()
     
 
   def UploadImage(self, featuredImage: ArticleImage, token: str):
