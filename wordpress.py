@@ -45,7 +45,7 @@ class Wordpress():
     if(response.ok and len(response.json()) > 0):
       foundCat = [data for data in response.json() if data['name'].lower() == termName.lower()]
       if len(foundCat) > 0:
-        return foundCat
+        return foundCat[0]
       
     response = requests.post(
       f'{wordpressAPIURL}/{termType}',
