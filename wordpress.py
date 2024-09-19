@@ -5,9 +5,9 @@ import requests
 import os
 import markdown
 
-username = os.environ['WP_USERNAME']
-password = os.environ['WP_PASSWORD']
-blogDomain = os.environ['WP_DOMAIN']
+username = 'Alvin Sim' #os.environ['WP_USERNAME']
+password = 'E27B emJA wkgQ U7Zm Oxy4 u9Fs' #os.environ['WP_PASSWORD']
+blogDomain = 'relak.la'#os.environ['WP_DOMAIN']
 
 wordpressAPIURL = f'https://{blogDomain}/wp-json/wp/v2'
 
@@ -41,29 +41,29 @@ class Wordpress():
   def UploadImage(self, featuredImage: ArticleImage, token: str):
     print(f'{wordpressAPIURL}/media') 
     r = requests.get(featuredImage.featureImageURL, allow_redirects=True)
-    open('featuredImage.png', 'wb').write(r.content)
+    savingFileName = '%s.png' % featuredImage.featureImageTitle.replace(" ", "-")
+    open(savingFileName, 'wb').write(r.content)
+    file = open(savingFileName, 'rb')
     response = requests.post(
       f'{wordpressAPIURL}/media',
       headers={
         "Authorization": "Basic {}".format(token),
-        "Content-Type": "image/png",
-        "Accept": "application/json",
-        'Content-Disposition': "attachment; filename=%s.png" % featuredImage.featureImageTitle,
+        # "Accept": "application/json",
+        # "cache-control": "no-cache",
+        #'Content-Disposition': "attachment; filename=%s" % featuredImage.featureImageTitle,
       },
-      data = {
-        'file': r.content,
+      files = {
         'title': featuredImage.featureImageTitle,
         'description': featuredImage.featureImageDescription,
-        'caption': featuredImage.featureImageDescription
+        'caption': featuredImage.featureImageDescription,
+        'file': file
       }
     )
-    print(response.text)
     return response.json()
 
   def NewArticle(self, article: Article, featuredImage: ArticleImage):
     token = self.getWordpressToken()
     imageRes = self.UploadImage(featuredImage=featuredImage, token=token)
-    print(imageRes)
     hTMLContent = markdown.markdown(article.content)
     response = requests.post(
       f'{wordpressAPIURL}/posts',
@@ -76,7 +76,14 @@ class Wordpress():
         'author': 'Alvin Sim',
         'tags': ",".join(article.tags),
         'categories': ",".join(article.categories),
-        'featured_image': imageRes['ID']
+        'featured_image': imageRes['id']
       }
     )
     return response
+  
+# wp = Wordpress()
+# image = ArticleImage
+# image.featureImageURL= 'https://miro.medium.com/v2/resize:fit:300/1*DHilTwLnzy84S1PJznQ4FQ.png'
+# image.featureImageTitle = 'testing'
+# image.featureImageDescription = "qwdqwdqwdq"
+# wp.UploadImage(featuredImage=image, token=wp.getWordpressToken())
