@@ -5,9 +5,9 @@ import requests
 import os
 import markdown
 
-username = 'Alvin Sim' #os.environ['WP_USERNAME']
-password = 'E27B emJA wkgQ U7Zm Oxy4 u9Fs' #os.environ['WP_PASSWORD']
-blogDomain = 'relak.la'#os.environ['WP_DOMAIN']
+username = os.environ['WP_USERNAME']
+password = os.environ['WP_PASSWORD']
+blogDomain = os.environ['WP_DOMAIN']
 
 wordpressAPIURL = f'https://{blogDomain}/wp-json/wp/v2'
 
@@ -42,19 +42,21 @@ class Wordpress():
     response = requests.get(
       f'{wordpressAPIURL}/{termType}?search={termName}'
     )
-    if(response.ok):
-      return [data for data in response.json() if data['name'].lower() == termName.lower()][0]
-    else:
-      response = requests.post(
-        f'{wordpressAPIURL}/{termType}',
-        headers={
-          "Authorization": "Basic {}".format(self.getWordpressToken())
-        },
-        data={
-          "name": termName
-        }
-      )
-      return response.json()
+    if(response.ok and len(response.json()) > 0):
+      foundCat = [data for data in response.json() if data['name'].lower() == termName.lower()]
+      if len(foundCat) > 0:
+        return foundCat[0]
+      
+    response = requests.post(
+      f'{wordpressAPIURL}/{termType}',
+      headers={
+        "Authorization": "Basic {}".format(self.getWordpressToken())
+      },
+      data={
+        "name": termName
+      }
+    )
+    return response.json()
     
 
   def UploadImage(self, featuredImage: ArticleImage, token: str):
@@ -116,6 +118,7 @@ class Wordpress():
     return response
   
 # wp = Wordpress()
+# wp.getTerm("")
 # image = ArticleImage
 # image.featureImageURL= 'https://miro.medium.com/v2/resize:fit:300/1*DHilTwLnzy84S1PJznQ4FQ.png'
 # image.featureImageTitle = 'testing'
